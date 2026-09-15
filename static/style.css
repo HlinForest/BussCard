@@ -1,4 +1,4 @@
-/* BussCard — 纸墨印章：青瓷灰纸 + 墨 + 印泥红。工具向，静默为主，手机优先。 */
+/* BussCard 纸墨印章：青瓷灰纸加墨加印泥红。工具向，静默为主，手机优先。 */
 :root{
   --paper:#e8eae6; --card:#fbfcfb; --card-deep:#f2f4f1;
   --ink:#22261f; --muted:#5f6862; --faint:#8b948d;
@@ -42,8 +42,8 @@ code{background:var(--card-deep);border:1px solid var(--hairline);border-radius:
 #photoImg{max-width:100%;display:block}
 #boxLayer{position:absolute;inset:0}
 .box{position:absolute;border:2px solid var(--pine);background:rgba(51,89,76,.10);cursor:move}
-.box .tag{position:absolute;top:-22px;left:0;background:var(--ink);color:#f4f5f2;font-size:12px;padding:1px 7px;border-radius:5px}
-.box .del{position:absolute;top:-24px;right:0;background:var(--seal);border-color:var(--seal);color:#fff;font-size:12px;padding:1px 8px;border-radius:5px}
+.box .tag{position:absolute;top:-22px;left:0;background:var(--ink);color:#f4f5f2;font-size:12px;padding:1px 7px;border-radius:6px}
+.box .del{position:absolute;top:-24px;right:0;background:var(--seal);border-color:var(--seal);color:#fff;font-size:12px;padding:1px 8px;border-radius:6px}
 .box .rs{position:absolute;right:-8px;bottom:-8px;width:16px;height:16px;background:var(--card);border:2px solid var(--pine);border-radius:50%;cursor:nwse-resize}
 #detectHint{font-size:13px;color:var(--pine)}
 details{margin:10px 0;color:var(--muted)}
@@ -67,7 +67,7 @@ summary{cursor:pointer;font-size:14px}
 .acard .arow{font-size:14.5px;font-variant-numeric:tabular-nums;margin:1px 0}
 .acard .abiz{font-size:13px;color:var(--pine);margin-top:7px;border-top:1px dashed var(--line);padding-top:6px}
 .acard .atags{font-size:12px;color:var(--faint);margin-top:5px}
-.acard .astatus{display:inline-block;font-family:var(--serif);font-size:12px;color:var(--seal-deep);border:1px solid var(--seal);border-radius:5px;padding:0 8px;margin-top:9px;transform:rotate(-1.5deg)}
+.acard .astatus{display:inline-block;font-family:var(--serif);font-size:12px;color:var(--seal-deep);border:1px solid var(--seal);border-radius:6px;padding:0 8px;margin-top:9px;transform:rotate(-1.5deg)}
 .acard .astatus.ok{color:var(--pine);border-color:var(--pine)}
 .draft .acard{box-shadow:none}
 .nocrop{background:var(--card-deep);border:1px dashed var(--line);border-radius:8px;min-height:120px;display:flex;align-items:center;justify-content:center;color:var(--faint)}

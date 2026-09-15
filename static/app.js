@@ -286,7 +286,7 @@ async function fetchModels(auto) {
     sel.value = r.models.includes(cur) ? cur : r.models[0];
     if (!cur) $("#llmModel").value = r.models[0];
   } else {
-    const o = document.createElement("option"); o.value = ""; o.textContent = "— 未取到，手填模型名 —"; sel.appendChild(o);
+    const o = document.createElement("option"); o.value = ""; o.textContent = "未取到请手填模型名"; sel.appendChild(o);
   }
   $("#llmModels").textContent = r.models && r.models.length ? `共 ${r.models.length} 个模型：${r.models.slice(0, 12).join("、")}${r.models.length > 12 ? "…" : ""}（已可下拉选择，也可手填）` : "该 Key 下无可用模型（或网关返回为空），请手填模型名";
   $("#llmStatus").textContent = "模型列表已更新";
