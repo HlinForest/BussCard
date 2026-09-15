@@ -1,0 +1,27 @@
+/**
+ * carddetect UTS 插件：名片四边形检测（自动框选）。
+ * - Android: OpenCV（Imgproc.findContours + approxPolyDP，gradle 引入 opencv-android）
+ * - iOS: Vision VNDetectRectanglesRequest（系统自带，无第三方依赖）
+ * - 鸿蒙：@kit.CoreVisionKit 形状检测；不可用则返回空数组走手动补框
+ * 输入沙箱图片绝对路径；输出 0-1000 相对坐标框（与桌面版 detector.py 同坐标系，
+ * 名片长宽比 1.2-2.2、面积比 >= 0.02、同排序规则）。失败/无结果返回空数组，不抛错。
+ * HBuilderX 编译验证待做。
+ */
+
+export interface DetectBox {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  quad: number[][];
+}
+
+export function detectCards(imageAbsPath: string, maxCards: number): DetectBox[] {
+  try {
+    return nativeDetectCards(imageAbsPath, maxCards);
+  } catch (_e) {
+    return [];
+  }
+}
+
+declare function nativeDetectCards(imageAbsPath: string, maxCards: number): DetectBox[];

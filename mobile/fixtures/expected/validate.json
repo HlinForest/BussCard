@@ -1,0 +1,53 @@
+[
+ {
+  "name": "张伟",
+  "issues": [],
+  "status": "已确认"
+ },
+ {
+  "name": "张威",
+  "issues": [],
+  "status": "已确认"
+ },
+ {
+  "name": "Daniel Chen",
+  "issues": [],
+  "status": "已确认"
+ },
+ {
+  "name": "Olivia Zhang",
+  "issues": [],
+  "status": "已确认"
+ },
+ {
+  "name": "张伟",
+  "issues": [],
+  "status": "已确认"
+ },
+ {
+  "name": "王芳",
+  "issues": [],
+  "status": "已确认"
+ },
+ {
+  "name": "陈静",
+  "issues": [],
+  "status": "已确认"
+ },
+ {
+  "name": "(bad phone)",
+  "issues": [
+   "phone1 格式可疑：abc",
+   "待核对：name、company为空"
+  ],
+  "status": "待核对"
+ },
+ {
+  "name": "(bad mail)",
+  "issues": [
+   "邮箱格式可疑：a@b",
+   "待核对：name、company、phone1为空"
+  ],
+  "status": "待核对"
+ }
+]

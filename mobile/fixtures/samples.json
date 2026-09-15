@@ -1,0 +1,51 @@
+[
+  {
+    "name": "张伟", "company": "XX机器人", "title": "销售经理",
+    "phone1": "+86 13800138000", "phone2": "", "email": "zw@xxrobot.com",
+    "address": "上海市浦东新区", "business": "工业机器人", "event": "工博会",
+    "met_at": "2026-09-01", "notes": "重点跟进",
+    "tags_printed": ["机器人"], "tags_inferred": ["销售"]
+  },
+  {
+    "name": "张威", "company": "XX机器人公司", "title": "销售",
+    "phone1": "13800138001", "phone2": "", "email": "",
+    "address": "", "business": "机器人销售", "event": "",
+    "met_at": "", "notes": "",
+    "tags_printed": [], "tags_inferred": []
+  },
+  {
+    "name": "Daniel Chen", "company": "EverPeak Technologies", "title": "Product Manager",
+    "phone1": "+1 4155550119", "phone2": "", "email": "daniel.chen@everpeaktech.com",
+    "address": "", "business": "industrial automation", "event": "",
+    "met_at": "", "notes": "",
+    "tags_printed": ["automation"], "tags_inferred": []
+  },
+  {
+    "name": "Olivia Zhang", "company": "GreenLeaf Bio", "title": "研究员",
+    "phone1": "17612345678", "phone2": "", "email": "olivia.zhang@greenleafbio.com",
+    "address": "", "business": "", "event": "",
+    "met_at": "", "notes": "",
+    "tags_printed": [], "tags_inferred": []
+  },
+  {
+    "name": "张伟", "company": "XX机器人", "title": "",
+    "phone1": "13800138000", "phone2": "", "email": "zw@xxrobot.com",
+    "address": "", "business": "", "event": "",
+    "met_at": "", "notes": "",
+    "tags_printed": [], "tags_inferred": []
+  },
+  {
+    "name": "王芳", "company": "蓝天包装", "title": "采购经理",
+    "phone1": "13988887766", "phone2": "", "email": "",
+    "address": "", "business": "", "event": "包装展会",
+    "met_at": "", "notes": "包装供应商，展会上认识",
+    "tags_printed": ["包装"], "tags_inferred": []
+  },
+  {
+    "name": "陈静", "company": "远洋物流", "title": "客服",
+    "phone1": "010-88886666", "phone2": "", "email": "chenjing@example.com",
+    "address": "", "business": "", "event": "",
+    "met_at": "", "notes": "",
+    "tags_printed": [], "tags_inferred": []
+  }
+]

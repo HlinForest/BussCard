@@ -1,0 +1,27 @@
+{
+  "pages": [
+    { "path": "pages/cards", "style": { "navigationBarTitleText": "名片" } },
+    { "path": "pages/entry", "style": { "navigationBarTitleText": "录入" } },
+    { "path": "pages/table", "style": { "navigationBarTitleText": "表格" } },
+    { "path": "pages/detail", "style": { "navigationBarTitleText": "详情" } },
+    { "path": "pages/settings", "style": { "navigationBarTitleText": "设置" } }
+  ],
+  "tabBar": {
+    "color": "#5c6670",
+    "selectedColor": "#002fa7",
+    "backgroundColor": "#fafbfb",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/cards", "text": "名片" },
+      { "pagePath": "pages/entry", "text": "录入" },
+      { "pagePath": "pages/table", "text": "表格" },
+      { "pagePath": "pages/settings", "text": "设置" }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "BussCard",
+    "navigationBarBackgroundColor": "#e9ebed",
+    "backgroundColor": "#e9ebed"
+  }
+}

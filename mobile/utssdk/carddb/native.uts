@@ -1,0 +1,13 @@
+/**
+ * 平台分发：同一份 NativeDb 契约，三端各一实现，HBuilderX 按目标平台编译对应文件。
+ * （uts.ts 只引这一处，不直接碰平台文件。）
+ */
+// #ifdef APP-ANDROID
+export { nativeDb } from './android.uts';
+// #endif
+// #ifdef APP-IOS
+export { nativeDb } from './ios.uts';
+// #endif
+// #ifdef APP-HARMONY
+export { nativeDb } from './harmony.uts';
+// #endif

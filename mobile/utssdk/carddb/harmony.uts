@@ -1,0 +1,30 @@
+/**
+ * carddb 鸿蒙实现（待 DevEco/HBuilderX 编译验证，无签名真机验证）。
+ * 用系统 @kit.ArkData 关系型数据库 relationalStore（RdbStore + RdbPredicates），
+ * 库文件放应用沙箱 files 目录。SQL 建表走 executeSql，查询走谓词接口后转 ContactRow。
+ * 方法签名见 index.uts NativeDb。
+ */
+// #ifdef APP-HARMONY
+import { NativeDb, ContactRow, DbValue, DB_NAME } from './index.uts';
+
+export class HarmonyDb implements NativeDb {
+  open(_name: string): void { harmonyOpen(DB_NAME); }
+  exec(sql: string, args: DbValue[]): number { return harmonyExec(sql, args); }
+  execNoResult(sql: string, args: DbValue[]): number { return harmonyExecUpdate(sql, args); }
+  query(sql: string, args: DbValue[]): ContactRow[] { return harmonyQuery(sql, args); }
+  close(): void { harmonyClose(); }
+  reopenDbFile(srcAbsPath: string): void { harmonyReopen(srcAbsPath); }
+}
+
+// 桥接函数在 HBuilderX/DevEco 内实现：relationalStore.getRdbStore +
+// executeSql（建表/增删改）/ query（RdbPredicates，按 updated_at/created_at 排序在 TS 层二次确认）/
+// 事务 beginTransaction/commit/rollback；_info 版本表同样建在 RDB 内。
+declare function harmonyOpen(name: string): void;
+declare function harmonyExec(sql: string, args: DbValue[]): number;
+declare function harmonyExecUpdate(sql: string, args: DbValue[]): number;
+declare function harmonyQuery(sql: string, args: DbValue[]): ContactRow[];
+declare function harmonyClose(): void;
+declare function harmonyReopen(srcAbsPath: string): void;
+
+export const nativeDb: NativeDb = new HarmonyDb();
+// #endif

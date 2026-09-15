@@ -1,0 +1,27 @@
+{
+  "name": "busscard-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BussCard 三端本地手机 App（uni-app Vue3+TS）：名片、录入、表格、设置",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "test:build": "tsc -p tsconfig.test.json --outDir dist-test"
+  },
+  "dependencies": {
+    "@dcloudio/uni-app": "2.0.2-5020420260813001",
+    "@dcloudio/vite-plugin-uni": "3.0.0-alpha-3000020210521001",
+    "jszip": "^3.10.1",
+    "vue": "^3.5.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "sql.js": "^1.12.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.5.0",
+    "vite": "^5.0.0"
+  }
+}

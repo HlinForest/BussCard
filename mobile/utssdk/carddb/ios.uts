@@ -1,0 +1,30 @@
+/**
+ * carddb iOS 实现（待 HBuilderX 编译验证）。
+ * 用系统 sqlite3 C 接口（libsqlite3.tbd 随系统提供，无需第三方库），库文件放 Documents。
+ * 方法签名见 index.uts NativeDb。
+ */
+// #ifdef APP-IOS
+import { NativeDb, ContactRow, DbValue, DB_NAME } from './index.uts';
+
+export class IosDb implements NativeDb {
+  open(_name: string): void { iosOpen(DB_NAME); }
+  exec(sql: string, args: DbValue[]): number { return iosExec(sql, args); }
+  execNoResult(sql: string, args: DbValue[]): number { return iosExecUpdate(sql, args); }
+  query(sql: string, args: DbValue[]): ContactRow[] { return iosQuery(sql, args); }
+  close(): void { iosClose(); }
+  reopenDbFile(srcAbsPath: string): void { iosReopen(srcAbsPath); }
+}
+
+// 桥接函数在 HBuilderX 内实现：sqlite3_open_v2（Documents 路径）/
+// sqlite3_prepare_v2 + sqlite3_bind_null/double/text + sqlite3_step
+// （INSERT 取 sqlite3_last_insert_rowid，UPDATE 取 sqlite3_changes）/
+// sqlite3_column_name/text/type 逐列读取，sqlite3_finalize/close 收尾。
+declare function iosOpen(name: string): void;
+declare function iosExec(sql: string, args: DbValue[]): number;
+declare function iosExecUpdate(sql: string, args: DbValue[]): number;
+declare function iosQuery(sql: string, args: DbValue[]): ContactRow[];
+declare function iosClose(): void;
+declare function iosReopen(srcAbsPath: string): void;
+
+export const nativeDb: NativeDb = new IosDb();
+// #endif

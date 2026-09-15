@@ -1,0 +1,229 @@
+{
+ "38000": [
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 150.0,
+   "reasons": [
+    "精确命中",
+    "电话尾号命中"
+   ]
+  },
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 150.0,
+   "reasons": [
+    "精确命中",
+    "电话尾号命中"
+   ]
+  }
+ ],
+ "张威": [
+  {
+   "name": "张威",
+   "company": "XX机器人公司",
+   "score": 162.74,
+   "reasons": [
+    "精确命中",
+    "姓名相似100",
+    "语义相关0.38"
+   ]
+  },
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 3.64,
+   "reasons": [
+    "语义相关0.06"
+   ]
+  }
+ ],
+ "工业机器人销售的人": [
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 35.2,
+   "reasons": [
+    "语义相关0.59",
+    "职位：销售经理"
+   ]
+  },
+  {
+   "name": "张威",
+   "company": "XX机器人公司",
+   "score": 33.49,
+   "reasons": [
+    "语义相关0.56",
+    "职位：销售"
+   ]
+  },
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 14.9,
+   "reasons": [
+    "语义相关0.25"
+   ]
+  }
+ ],
+ "daniel": [
+  {
+   "name": "Daniel Chen",
+   "company": "EverPeak Technologies",
+   "score": 126.64,
+   "reasons": [
+    "精确命中",
+    "语义相关0.44"
+   ]
+  }
+ ],
+ "包装供应商": [
+  {
+   "name": "王芳",
+   "company": "蓝天包装",
+   "score": 37.48,
+   "reasons": [
+    "语义相关0.62",
+    "备注：包装供应商，展会上认识"
+   ]
+  }
+ ],
+ "": [
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 0.0,
+   "reasons": [
+    "全部"
+   ]
+  },
+  {
+   "name": "张威",
+   "company": "XX机器人公司",
+   "score": 0.0,
+   "reasons": [
+    "全部"
+   ]
+  },
+  {
+   "name": "Daniel Chen",
+   "company": "EverPeak Technologies",
+   "score": 0.0,
+   "reasons": [
+    "全部"
+   ]
+  },
+  {
+   "name": "Olivia Zhang",
+   "company": "GreenLeaf Bio",
+   "score": 0.0,
+   "reasons": [
+    "全部"
+   ]
+  },
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 0.0,
+   "reasons": [
+    "全部"
+   ]
+  },
+  {
+   "name": "王芳",
+   "company": "蓝天包装",
+   "score": 0.0,
+   "reasons": [
+    "全部"
+   ]
+  },
+  {
+   "name": "陈静",
+   "company": "远洋物流",
+   "score": 0.0,
+   "reasons": [
+    "全部"
+   ]
+  }
+ ],
+ "13800138000": [
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 164.07,
+   "reasons": [
+    "精确命中",
+    "电话尾号命中",
+    "语义相关0.23"
+   ]
+  },
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 155.31,
+   "reasons": [
+    "精确命中",
+    "电话尾号命中",
+    "语义相关0.09"
+   ]
+  }
+ ],
+ "Olivia": [
+  {
+   "name": "Olivia Zhang",
+   "company": "GreenLeaf Bio",
+   "score": 128.06,
+   "reasons": [
+    "精确命中",
+    "语义相关0.47"
+   ]
+  }
+ ],
+ "客服": [
+  {
+   "name": "陈静",
+   "company": "远洋物流",
+   "score": 29.82,
+   "reasons": [
+    "语义相关0.50",
+    "职位：客服"
+   ]
+  }
+ ],
+ "不存在的名字xyz": [
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 9.14,
+   "reasons": [
+    "语义相关0.15"
+   ]
+  },
+  {
+   "name": "张威",
+   "company": "XX机器人公司",
+   "score": 5.23,
+   "reasons": [
+    "语义相关0.09"
+   ]
+  },
+  {
+   "name": "张伟",
+   "company": "XX机器人",
+   "score": 3.45,
+   "reasons": [
+    "语义相关0.06"
+   ]
+  }
+ ],
+ "__tag_机器人__": [
+  {
+   "name": "张伟",
+   "score": 0.0,
+   "reasons": [
+    "全部"
+   ]
+  }
+ ]
+}

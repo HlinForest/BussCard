@@ -1,0 +1,35 @@
+{
+  "name": "BussCard",
+  "appid": "__UNI__BussCard_PLACEHOLDER__",
+  "description": "本地名片管家：拍照多卡识别、Anki式卡片、表格、混合检索",
+  "versionName": "0.1.0",
+  "versionCode": 1,
+  "transformPx": false,
+  "app-plus": {
+    "compatible": { "ignoreVersion": true },
+    "privacy": {
+      "prompt": "template",
+      "template": {
+        "title": "服务协议与隐私",
+        "message": "本应用为纯本地单机应用：联系人与照片只存本机；仅在您主动识别、测试接口、获取模型列表时访问您配置的服务。请确认后使用。"
+      }
+    },
+    "permissions": {
+      "Camera": { "desc": "拍照录入名片" },
+      "PhotoLibrary": { "desc": "从相册选择名片照片" }
+    },
+    "distribute": {
+      "android": {
+        "packagename": "com.hlinforest.busscard",
+        "minSdkVersion": 26
+      },
+      "ios": {
+        "bundleid": "com.hlinforest.busscard"
+      }
+    }
+  },
+  "app-harmony": {
+    "bundleName": "com.hlinforest.busscard"
+  },
+  "vueVersion": "3"
+}

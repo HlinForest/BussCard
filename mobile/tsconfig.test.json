@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "outDir": "dist-test",
+    "rootDir": "."
+  },
+  "include": ["src/services", "src/types", "src/adapters/memory.ts", "src/adapters/types.ts", "tests", "fixtures/fixtures.ts"],
+  "exclude": ["node_modules", "dist-test", "src/adapters/uts.ts", "src/services/app.ts"]
+}

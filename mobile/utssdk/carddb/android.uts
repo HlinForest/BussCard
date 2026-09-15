@@ -1,0 +1,29 @@
+/**
+ * carddb Android 实现（待 HBuilderX 编译验证）。
+ * 选用 android.database.sqlite.SQLiteOpenHelper（稳定 API），库文件放应用私有 filesDir。
+ * 方法签名见 index.uts NativeDb；SQL 由 index.uts 统一拼装，此处只做参数绑定与游标读取。
+ */
+// #ifdef APP-ANDROID
+import { NativeDb, ContactRow, DbValue, DB_NAME } from './index.uts';
+
+export class AndroidDb implements NativeDb {
+  open(_name: string): void { androidOpen(DB_NAME); }
+  exec(sql: string, args: DbValue[]): number { return androidExec(sql, args); }
+  execNoResult(sql: string, args: DbValue[]): number { return androidExecUpdate(sql, args); }
+  query(sql: string, args: DbValue[]): ContactRow[] { return androidQuery(sql, args); }
+  close(): void { androidClose(); }
+  reopenDbFile(srcAbsPath: string): void { androidReopen(srcAbsPath); }
+}
+
+// 以下桥接函数在 HBuilderX 内用 android.database.sqlite 实现：
+// SQLiteOpenHelper.getWritableDatabase / compileStatement(bindNull/bindDouble/bindString,
+// executeInsert/executeUpdateDelete) / rawQuery + Cursor(getColumnName/moveToNext/isNull/getString/close)。
+declare function androidOpen(name: string): void;
+declare function androidExec(sql: string, args: DbValue[]): number;
+declare function androidExecUpdate(sql: string, args: DbValue[]): number;
+declare function androidQuery(sql: string, args: DbValue[]): ContactRow[];
+declare function androidClose(): void;
+declare function androidReopen(srcAbsPath: string): void;
+
+export const nativeDb: NativeDb = new AndroidDb();
+// #endif

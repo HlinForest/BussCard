@@ -1,0 +1,72 @@
+/**
+ * carddb UTS 插件：联系人库统一接口。
+ * - index.uts：建表 SQL、版本迁移编排、事务编排（纯逻辑，三端共用）
+ * - android.uts / ios.uts / harmony.uts：NativeDb 原生实现
+ * HBuilderX 编译验证待做（docs/VERIFY.md）。TS 业务层经 DbAdapter 调用，
+ * 真机绑定见 src/adapters/uts.ts。
+ */
+
+export type DbValue = string | number | null;
+export type ContactRow = Map<string, DbValue>;
+
+/** 各端必须实现的最小原生能力。 */
+export interface NativeDb {
+  open(name: string): void;
+  exec(sql: string, args: DbValue[]): number; // 返回 insertId（非 INSERT 返回 0）
+  execNoResult(sql: string, args: DbValue[]): number; // 返回 rowsAffected
+  query(sql: string, args: DbValue[]): ContactRow[];
+  close(): void;
+  /** 用外部 sqlite 文件整体替换当前库（桌面备份导入用），实现须关闭旧连接后原子替换。 */
+  reopenDbFile(srcAbsPath: string): void;
+}
+
+export const DB_NAME = 'busscard.db';
+export const DB_VERSION = 1;
+
+const SCHEMA_V1: string[] = [
+  `CREATE TABLE IF NOT EXISTS batches (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    photo_path TEXT NOT NULL,
+    count INTEGER DEFAULT 0,
+    created_at REAL NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS contacts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT DEFAULT '', company TEXT DEFAULT '', title TEXT DEFAULT '',
+    phone1 TEXT DEFAULT '', phone2 TEXT DEFAULT '', email TEXT DEFAULT '',
+    address TEXT DEFAULT '', business TEXT DEFAULT '', event TEXT DEFAULT '',
+    met_at TEXT DEFAULT '', notes TEXT DEFAULT '',
+    tags_printed TEXT DEFAULT '[]', tags_inferred TEXT DEFAULT '[]',
+    status TEXT DEFAULT '待核对',
+    photo_path TEXT DEFAULT '', crop_path TEXT DEFAULT '',
+    search_text TEXT DEFAULT '', embedding TEXT DEFAULT '',
+    created_at REAL NOT NULL, updated_at REAL NOT NULL
+  )`,
+  `CREATE INDEX IF NOT EXISTS idx_contacts_name ON contacts(name)`,
+  `CREATE INDEX IF NOT EXISTS idx_contacts_company ON contacts(company)`,
+  `CREATE INDEX IF NOT EXISTS idx_contacts_phone1 ON contacts(phone1)`,
+  `CREATE INDEX IF NOT EXISTS idx_contacts_email ON contacts(email)`,
+];
+
+/** 与桌面版 SCHEMA 字段一一对应；新增版本在此追加并写 migrateToV{n}。 */
+export function ensureSchema(db: NativeDb): void {
+  db.open(DB_NAME);
+  db.exec(`CREATE TABLE IF NOT EXISTS _info (k TEXT PRIMARY KEY, v TEXT)`, []);
+  const rows = db.query(`SELECT v FROM _info WHERE k='version'`, []);
+  const ver = rows.length > 0 ? parseInt(String(rows[0].get('v') ?? '0')) : 0;
+  if (ver < 1) {
+    for (const sql of SCHEMA_V1) db.exec(sql, []);
+    db.exec(`INSERT OR REPLACE INTO _info (k, v) VALUES ('version', '1')`, []);
+  }
+}
+
+export function withTx(db: NativeDb, task: () => void): void {
+  db.exec('BEGIN', []);
+  try {
+    task();
+    db.exec('COMMIT', []);
+  } catch (e) {
+    db.exec('ROLLBACK', []);
+    throw e;
+  }
+}
