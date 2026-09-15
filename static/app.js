@@ -322,7 +322,7 @@ async function fetchModels(auto) {
   const cur = $("#llmModel").value.trim();
   if (r.models && r.models.length) {
     sel.value = r.models.includes(cur) ? cur : r.models[0];
-    if (!cur) $("#llmModel").value = r.models[0];
+    if (!r.models.includes(cur)) $("#llmModel").value = sel.value;
   } else {
     const o = document.createElement("option"); o.value = ""; o.textContent = "未取到请手填模型名"; sel.appendChild(o);
   }
