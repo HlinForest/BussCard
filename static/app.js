@@ -276,10 +276,11 @@ const PROVIDERS = {
   deepseek: "https://api.deepseek.com/chat/completions",
   dashscope: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
   openai: "https://api.openai.com/v1/chat/completions",
+  megmeet: "https://tokenkey.megmeet.com/v1/chat/completions",
   custom: ""
 };
 function matchProvider(url) {
-  for (const k of ["deepseek", "dashscope", "openai"]) if ((url || "").startsWith(PROVIDERS[k].replace("/chat/completions", ""))) return k;
+  for (const k of ["deepseek", "dashscope", "openai", "megmeet"]) if ((url || "").startsWith(PROVIDERS[k].replace("/chat/completions", ""))) return k;
   return "custom";
 }
 async function loadLlm() {
