@@ -276,7 +276,7 @@ const PROVIDERS = {
   deepseek: "https://api.deepseek.com/chat/completions",
   dashscope: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
   openai: "https://api.openai.com/v1/chat/completions",
-  megmeet: "https://tokenkey.megmeet.com/v1",
+  megmeet: "https://tokenkey.megmeet.com/v1/chat/completions",
   custom: ""
 };
 function matchProvider(url) {
