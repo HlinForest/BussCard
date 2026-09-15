@@ -73,8 +73,8 @@
 <div style="display:grid;gap:8px;max-width:640px;margin-top:8px">
 <label>API URL（/chat/completions）<input id="llmUrl" placeholder="https://你的网关/v1/chat/completions" style="width:100%"></label>
 <label>API Key<input id="llmKey" type="password" placeholder="sk-..." style="width:100%" autocomplete="off"></label>
-<label>模型<input id="llmModel" list="llmModelList" placeholder="gpt-4o-mini（可手填，或点获取后下拉选）" style="width:100%"></label>
-<datalist id="llmModelList"></datalist>
+<label>模型（可手填）<input id="llmModel" placeholder="如 deepseek-v4-flash-vision-exp / qwen-vl-max" style="width:100%"></label>
+<label>模型下拉选择<select id="llmModelSel" style="width:100%"><option value="">— 先点“获取模型列表” —</option></select></label>
 <div><button id="btnLlmModels">获取模型列表</button> <button id="btnLlmSave">保存</button> <button id="btnLlmTest">测试连接</button> <span id="llmStatus" class="muted"></span></div>
 <div id="llmModels" class="muted"></div>
 </div></section>

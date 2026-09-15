@@ -279,14 +279,20 @@ async function fetchModels(auto) {
   try {
   const r = await fetch("/api/llm-models", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ api_url: url, api_key: key }) }).then(r => r.json());
   if (r.error) { $("#llmStatus").textContent = r.error + "（部分网关不支持 /models，可手填模型名）"; return; }
-  const dl = $("#llmModelList"); dl.innerHTML = "";
-  (r.models || []).forEach(m => { const o = document.createElement("option"); o.value = m; dl.appendChild(o); });
+  const sel = $("#llmModelSel"); sel.innerHTML = "";
+  (r.models || []).forEach((m, i) => { const o = document.createElement("option"); o.value = m; o.textContent = m; sel.appendChild(o); });
   const cur = $("#llmModel").value.trim();
-  if (!cur && r.models && r.models.length) $("#llmModel").value = r.models[0];
+  if (r.models && r.models.length) {
+    sel.value = r.models.includes(cur) ? cur : r.models[0];
+    if (!cur) $("#llmModel").value = r.models[0];
+  } else {
+    const o = document.createElement("option"); o.value = ""; o.textContent = "— 未取到，手填模型名 —"; sel.appendChild(o);
+  }
   $("#llmModels").textContent = r.models && r.models.length ? `共 ${r.models.length} 个模型：${r.models.slice(0, 12).join("、")}${r.models.length > 12 ? "…" : ""}（已可下拉选择，也可手填）` : "该 Key 下无可用模型（或网关返回为空），请手填模型名";
   $("#llmStatus").textContent = "模型列表已更新";
   } finally { if (!auto) hideBusy(); }
 }
 $("#btnLlmModels").onclick = () => fetchModels(false);
+$("#llmModelSel").onchange = e => { if (e.target.value) $("#llmModel").value = e.target.value; };
 $("#llmKey").addEventListener("change", () => { if ($("#llmUrl").value.trim() && $("#llmKey").value.trim()) fetchModels(true); });
 loadDeck();
