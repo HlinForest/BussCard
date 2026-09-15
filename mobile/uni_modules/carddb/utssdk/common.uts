@@ -1,9 +1,6 @@
 /**
- * carddb UTS 插件：联系人库统一接口。
- * - index.uts：建表 SQL、版本迁移编排、事务编排（纯逻辑，三端共用）
- * - android.uts / ios.uts / harmony.uts：NativeDb 原生实现
- * HBuilderX 编译验证待做（docs/VERIFY.md）。TS 业务层经 DbAdapter 调用，
- * 真机绑定见 src/adapters/uts.ts。
+ * carddb 公共逻辑（三端共用）：类型、建表 SQL、版本迁移编排、事务编排。
+ * 原生能力由 NativeDb 接口注入，各端实现见 app-android / app-ios / app-harmony。
  */
 
 export type DbValue = string | number | null;

@@ -1,0 +1,6 @@
+{
+  "id": "carddetect",
+  "displayName": "BussCard 名片检测",
+  "version": "0.1.0",
+  "description": "名片四边形自动检测（Android-OpenCV / iOS-Vision / 鸿蒙回退手动）"
+}

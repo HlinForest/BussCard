@@ -1,13 +1,10 @@
 /**
- * carddb 鸿蒙实现（待 DevEco/HBuilderX 编译验证，无签名真机验证）。
- * 用系统 @kit.ArkData 关系型数据库 relationalStore（RdbStore + RdbPredicates），
- * 库文件放应用沙箱 files 目录。SQL 建表走 executeSql，查询走谓词接口后转 ContactRow。
- * 方法签名见 index.uts NativeDb。
+ * carddb 鸿蒙实现（@kit.ArkData relationalStore RdbStore + RdbPredicates）。
+ * 库文件放应用沙箱 files。未在 DevEco/HBuilderX 内编译验证，无签名真机验证。
  */
-// #ifdef APP-HARMONY
-import { NativeDb, ContactRow, DbValue, DB_NAME } from './index.uts';
+import { NativeDb, ContactRow, DbValue, DB_NAME } from '../common.uts';
 
-export class HarmonyDb implements NativeDb {
+class HarmonyDb implements NativeDb {
   open(_name: string): void { harmonyOpen(DB_NAME); }
   exec(sql: string, args: DbValue[]): number { return harmonyExec(sql, args); }
   execNoResult(sql: string, args: DbValue[]): number { return harmonyExecUpdate(sql, args); }
@@ -27,4 +24,3 @@ declare function harmonyClose(): void;
 declare function harmonyReopen(srcAbsPath: string): void;
 
 export const nativeDb: NativeDb = new HarmonyDb();
-// #endif

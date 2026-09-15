@@ -7,11 +7,19 @@
 import type { Box, Contact, NewContact } from '../types.js';
 import type { DbAdapter, KvAdapter, SecureAdapter } from './types.js';
 import type { HttpAdapter } from '../services/llm.js';
-import { ensureSchema, withTx } from '../../utssdk/carddb/index.uts.js';
-import { nativeDb } from '../../utssdk/carddb/native.uts.js';
-import { privateRoot, readAbsFile, readBytes, systemPickFile, systemShare, writeBytes } from '../../utssdk/cardstore/index.uts.js';
-import { secureClear, secureLoad, secureSave } from '../../utssdk/cardsecure/index.uts.js';
-import { detectCards } from '../../utssdk/carddetect/index.uts.js';
+import { ensureSchema, withTx } from '@/uni_modules/carddb/utssdk/index.uts';
+// #ifdef APP-ANDROID
+import { nativeDb } from '@/uni_modules/carddb/utssdk/app-android/index.uts';
+// #endif
+// #ifdef APP-IOS
+import { nativeDb } from '@/uni_modules/carddb/utssdk/app-ios/index.uts';
+// #endif
+// #ifdef APP-HARMONY
+import { nativeDb } from '@/uni_modules/carddb/utssdk/app-harmony/index.uts';
+// #endif
+import { privateRoot, readAbsFile, readBytes, systemPickFile, systemShare, writeBytes } from '@/uni_modules/cardstore/utssdk/index.uts';
+import { secureClear, secureLoad, secureSave } from '@/uni_modules/cardsecure/utssdk/index.uts';
+import { detectCards } from '@/uni_modules/carddetect/utssdk/index.uts';
 
 function rowToContact(row: Map<string, string | number | null>): Contact {
   const s = (k: string) => {

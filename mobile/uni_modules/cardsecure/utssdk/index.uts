@@ -1,9 +1,9 @@
 /**
- * cardsecure UTS 插件：Key 进系统安全存储。
+ * cardsecure：Key 进系统安全存储，不写日志、不进普通备份。
  * - Android: EncryptedSharedPreferences（AndroidX Security）
  * - iOS: Keychain（kSecClassGenericPassword）
  * - 鸿蒙：AssetStore（@kit.AssetStoreKit，同步接口）
- * 不写日志、不进普通备份。HBuilderX 编译验证待做。
+ * HBuilderX 编译验证待做。
  */
 
 export function secureSave(key: string, value: string): void {

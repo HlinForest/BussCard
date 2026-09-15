@@ -8,7 +8,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "lib": ["ES2020", "DOM"],
-    "types": []
+    "types": [],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": ["src", "utssdk"],
   "exclude": ["node_modules", "tests", "dist-test", "unpackage"]

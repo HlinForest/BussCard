@@ -1,0 +1,6 @@
+{
+  "id": "cardsecure",
+  "displayName": "BussCard 安全存储",
+  "version": "0.1.0",
+  "description": "API Key 进系统安全存储（Android EncryptedSharedPreferences / iOS Keychain / 鸿蒙 AssetStore）"
+}

@@ -40,12 +40,12 @@
 <script setup lang="ts">
 import { onShow } from '@dcloudio/uni-app';
 import { ref } from 'vue';
-import type { Contact, DupeGroup } from '../types';
-import { db, cardFiles } from '../services/app';
-import { hybridSearch } from '../services/search';
-import { dupeGroups } from '../services/dedupe';
-import { deleteContacts } from '../services/contacts';
-import { exportXlsx } from '../services/excel';
+import type { Contact, DupeGroup } from '../src/types';
+import { db, cardFiles } from '../src/services/app';
+import { hybridSearch } from '../src/services/search';
+import { dupeGroups } from '../src/services/dedupe';
+import { deleteContacts } from '../src/services/contacts';
+import { exportXlsx } from '../src/services/excel';
 
 const q = ref('');
 const list = ref<Contact[]>([]);

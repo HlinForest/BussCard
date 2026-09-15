@@ -1,8 +1,9 @@
 /**
- * cardstore UTS 插件：图片私有目录读写、备份导入导出、系统分享。
+ * cardstore：图片私有目录读写、备份导入导出、系统分享、文件选择。
  * - 图片存应用私有目录（Android filesDir / iOS Documents / 鸿蒙 files），数据库只记相对路径
  * - 导出备份/Excel 走系统分享面板；导入经系统文件选择器
- * HBuilderX 编译验证待做。
+ * 原生映射：Android(FileProvider+ACTION_SEND/SAF)/iOS(UIActivityViewController/UIDocumentPicker)/
+ * 鸿蒙(Picker+Share Kit)，HBuilderX 编译验证待做。
  */
 
 export interface ShareFile {
@@ -13,15 +14,6 @@ export interface ShareFile {
 
 /** 私有根目录（images/、backup/ 挂下面）。 */
 export function privateRoot(): string {
-  // #ifdef APP-ANDROID
-  // return androidFilesDir() + '/busscard'
-  // #endif
-  // #ifdef APP-IOS
-  // return iosDocumentsDir() + '/busscard'
-  // #endif
-  // #ifdef APP-HARMONY
-  // return harmonyFilesDir() + '/busscard'
-  // #endif
   return nativePrivateRoot();
 }
 

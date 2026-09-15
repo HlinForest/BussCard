@@ -1,0 +1,118 @@
+/**
+ * carddb Android 实现：SQLiteOpenHelper，库文件放应用私有 filesDir。
+ * 与 index.uts 的 NativeDb 契约对齐；SQL 由调用方（index.uts ensureSchema / uts.ts）传入。
+ */
+import { NativeDb, ContactRow, DbValue, DB_NAME } from '../common.uts';
+import SQLiteOpenHelper from 'android.database.sqlite.SQLiteOpenHelper';
+import SQLiteDatabase from 'android.database.sqlite.SQLiteDatabase';
+import SQLiteStatement from 'android.database.sqlite.SQLiteStatement';
+import Cursor from 'android.database.Cursor';
+import { getAppContext } from 'io.dcloud.uts.android';
+import File from 'java.io.File';
+import FileInputStream from 'java.io.FileInputStream';
+import FileOutputStream from 'java.io.FileOutputStream';
+
+class BusscardHelper extends SQLiteOpenHelper {
+  constructor() {
+    super(getAppContext(), DB_NAME, null, 1);
+  }
+  onCreate(_db: SQLiteDatabase): void {}
+  onUpgrade(_db: SQLiteDatabase, _oldVersion: number, _newVersion: number): void {}
+}
+
+let helper: BusscardHelper | null = null;
+
+function db(): SQLiteDatabase {
+  if (helper == null) helper = new BusscardHelper();
+  return (helper as BusscardHelper).getWritableDatabase();
+}
+
+function bind(stmt: SQLiteStatement, args: DbValue[]): void {
+  for (let i = 0; i < args.length; i++) {
+    const v = args[i];
+    if (v == null) stmt.bindNull(i + 1);
+    else if (typeof v === 'number') stmt.bindDouble(i + 1, v);
+    else stmt.bindString(i + 1, v);
+  }
+}
+
+class AndroidDb implements NativeDb {
+  open(_name: string): void {
+    db();
+  }
+  exec(sql: string, args: DbValue[]): number {
+    const stmt = db().compileStatement(sql);
+    try {
+      bind(stmt, args);
+      try {
+        return Number(stmt.executeInsert());
+      } catch (_e) {
+        stmt.execute();
+        return 0;
+      }
+    } finally {
+      stmt.close();
+    }
+  }
+  execNoResult(sql: string, args: DbValue[]): number {
+    const stmt = db().compileStatement(sql);
+    try {
+      bind(stmt, args);
+      try {
+        return stmt.executeUpdateDelete();
+      } catch (_e) {
+        stmt.execute();
+        return 0;
+      }
+    } finally {
+      stmt.close();
+    }
+  }
+  query(sql: string, args: DbValue[]): ContactRow[] {
+    const sargs: string[] = args.map((v) => (v == null ? '' : String(v)));
+    const cur: Cursor = db().rawQuery(sql, sargs);
+    const out: ContactRow[] = [];
+    try {
+      const n = cur.getColumnCount();
+      const cols: string[] = [];
+      for (let i = 0; i < n; i++) cols.push(cur.getColumnName(i));
+      while (cur.moveToNext()) {
+        const row = new Map<string, DbValue>();
+        for (let i = 0; i < n; i++) {
+          row.set(cols[i], cur.isNull(i) ? null : cur.getString(i));
+        }
+        out.push(row);
+      }
+    } finally {
+      cur.close();
+    }
+    return out;
+  }
+  close(): void {
+    helper?.close();
+    helper = null;
+  }
+  reopenDbFile(srcAbsPath: string): void {
+    this.close();
+    const dst = new File(getAppContext().getFilesDir(), DB_NAME);
+    const input = new FileInputStream(new File(srcAbsPath));
+    try {
+      const output = new FileOutputStream(dst);
+      try {
+        const buf = new Array<number>(8192);
+        let len = input.read(buf);
+        while (len > 0) {
+          output.write(buf, 0, len);
+          len = input.read(buf);
+        }
+      } finally {
+        output.close();
+      }
+    } finally {
+      input.close();
+    }
+    db();
+  }
+}
+
+export const nativeDb: NativeDb = new AndroidDb();

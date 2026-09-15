@@ -26,9 +26,9 @@
 <script setup lang="ts">
 import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
-import type { Contact } from '../types';
-import { db } from '../services/app';
-import { updateContact, deleteContacts } from '../services/contacts';
+import type { Contact } from '../src/types';
+import { db } from '../src/services/app';
+import { updateContact, deleteContacts } from '../src/services/contacts';
 
 const textKeys = ['name', 'company', 'title', 'phone1', 'phone2', 'email', 'address',
   'business', 'event', 'met_at', 'notes'] as const;

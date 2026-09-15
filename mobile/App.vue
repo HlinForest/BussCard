@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onLaunch } from '@dcloudio/uni-app';
-import { UtsDb } from './adapters/uts';
+import { UtsDb } from './src/adapters/uts';
 
 onLaunch(() => {
   new UtsDb().init().catch((e) => console.error('db init failed', e));

@@ -1,0 +1,6 @@
+{
+  "id": "carddb",
+  "displayName": "BussCard 联系人库",
+  "version": "0.1.0",
+  "description": "联系人 SQLite/RDB 统一接口（查询/事务/版本迁移/库文件替换）"
+}

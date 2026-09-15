@@ -1,5 +1,5 @@
 /**
- * carddetect UTS 插件：名片四边形检测（自动框选）。
+ * carddetect：名片四边形检测（自动框选）。
  * - Android: OpenCV（Imgproc.findContours + approxPolyDP，gradle 引入 opencv-android）
  * - iOS: Vision VNDetectRectanglesRequest（系统自带，无第三方依赖）
  * - 鸿蒙：@kit.CoreVisionKit 形状检测；不可用则返回空数组走手动补框

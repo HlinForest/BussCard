@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { Contact } from '../types';
+import type { Contact } from '../src/types';
 
 const props = defineProps<{ contact: Contact }>();
 defineEmits<{ (e: 'open', id: number): void }>();

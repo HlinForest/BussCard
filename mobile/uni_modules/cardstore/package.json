@@ -1,0 +1,6 @@
+{
+  "id": "cardstore",
+  "displayName": "BussCard 文件与分享",
+  "version": "0.1.0",
+  "description": "图片私有目录读写、备份导入导出、系统分享、文件选择"
+}

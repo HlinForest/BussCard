@@ -1,12 +1,10 @@
 /**
- * carddb iOS 实现（待 HBuilderX 编译验证）。
- * 用系统 sqlite3 C 接口（libsqlite3.tbd 随系统提供，无需第三方库），库文件放 Documents。
- * 方法签名见 index.uts NativeDb。
+ * carddb iOS 实现（系统 sqlite3 C 接口，libsqlite3.tbd 随系统提供）。
+ * 库文件放 Documents。未在 HBuilderX 内编译验证。
  */
-// #ifdef APP-IOS
-import { NativeDb, ContactRow, DbValue, DB_NAME } from './index.uts';
+import { NativeDb, ContactRow, DbValue, DB_NAME } from '../common.uts';
 
-export class IosDb implements NativeDb {
+class IosDb implements NativeDb {
   open(_name: string): void { iosOpen(DB_NAME); }
   exec(sql: string, args: DbValue[]): number { return iosExec(sql, args); }
   execNoResult(sql: string, args: DbValue[]): number { return iosExecUpdate(sql, args); }
@@ -27,4 +25,3 @@ declare function iosClose(): void;
 declare function iosReopen(srcAbsPath: string): void;
 
 export const nativeDb: NativeDb = new IosDb();
-// #endif

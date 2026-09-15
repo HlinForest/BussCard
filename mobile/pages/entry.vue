@@ -36,13 +36,13 @@
 import { ref } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import BoxEditor from '../components/BoxEditor.vue';
-import type { Box, ContactDraft, ContactFields } from '../types';
-import { db, kv, sec, http, cardFiles, nativeDetect } from '../services/app';
-import { recognizePhotoMulti, recognizeCrop, emptyFields } from '../services/llm';
-import { validateFields } from '../services/validate';
-import { createContact, findDupCandidates } from '../services/contacts';
-import { loadLlmConfig } from '../services/settings';
-import { DRAFT_KEY, photoName, cropName } from '../services/images';
+import type { Box, ContactDraft, ContactFields } from '../src/types';
+import { db, kv, sec, http, cardFiles, nativeDetect } from '../src/services/app';
+import { recognizePhotoMulti, recognizeCrop, emptyFields } from '../src/services/llm';
+import { validateFields } from '../src/services/validate';
+import { createContact, findDupCandidates } from '../src/services/contacts';
+import { loadLlmConfig } from '../src/services/settings';
+import { DRAFT_KEY, photoName, cropName } from '../src/services/images';
 
 const textKeys = ['name', 'company', 'title', 'phone1', 'phone2', 'email', 'address',
   'business', 'event', 'met_at', 'notes'] as Array<keyof ContactFields>;
@@ -229,5 +229,3 @@ onShow(restore);
 .issues { color: #9a5b12; font-size: 13px; margin-top: 6px; }
 .dups { color: #002fa7; font-size: 13px; margin-top: 4px; }
 </style>
-<canvas canvas-id="entryCanvas" style="position:fixed;left:-9999px;width:300px;height:300px;" />
-</template>

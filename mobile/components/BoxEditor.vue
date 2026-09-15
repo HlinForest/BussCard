@@ -1,4 +1,4 @@
-<!-- 手动框选编辑器：拖动移动、右下角手柄缩放、补框/删框；失败回退整图（调用方处理） -->
+<!-- 手动框选编辑器：拖动移动、右下角手柄缩放、补框删框；失败回退整图由调用方处理 -->
 <template>
   <view class="wrap">
     <image :src="src" mode="widthFix" class="photo" @load="onLoad" />
@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Box } from '../types';
+import type { Box } from '../src/types';
 
 const props = defineProps<{ src: string; modelValue: Box[] }>();
 const emit = defineEmits<{

@@ -29,11 +29,11 @@
 import { onShow } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 import ContactCard from '../components/ContactCard.vue';
-import type { Contact, DupeGroup } from '../types';
-import { db } from '../services/app';
-import { hybridSearch } from '../services/search';
-import { dupeGroups } from '../services/dedupe';
-import { deleteContacts } from '../services/contacts';
+import type { Contact, DupeGroup } from '../src/types';
+import { db } from '../src/services/app';
+import { hybridSearch } from '../src/services/search';
+import { dupeGroups } from '../src/services/dedupe';
+import { deleteContacts } from '../src/services/contacts';
 
 const q = ref('');
 const list = ref<Contact[]>([]);

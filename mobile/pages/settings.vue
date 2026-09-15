@@ -37,13 +37,13 @@
 <script setup lang="ts">
 import { onShow } from '@dcloudio/uni-app';
 import { ref } from 'vue';
-import { db, kv, sec, http, cardFiles } from '../services/app';
-import { loadLlmConfig, saveLlmConfig, maskKey } from '../services/settings';
-import { PROVIDERS, BACKUP_VERSION } from '../types';
-import { listModels, testConnection, matchProvider } from '../services/llm';
-import { exportBackupV2 } from '../services/backup';
-import { applyV2Import, dupeSummaryAfterImport, planImport } from '../services/importer';
-import { base64ToBytes, bytesToBase64 } from '../services/base64';
+import { db, kv, sec, http, cardFiles } from '../src/services/app';
+import { loadLlmConfig, saveLlmConfig, maskKey } from '../src/services/settings';
+import { PROVIDERS, BACKUP_VERSION } from '../src/types';
+import { listModels, testConnection, matchProvider } from '../src/services/llm';
+import { exportBackupV2 } from '../src/services/backup';
+import { applyV2Import, dupeSummaryAfterImport, planImport } from '../src/services/importer';
+import { base64ToBytes, bytesToBase64 } from '../src/services/base64';
 
 const providers = [
   { id: 'deepseek', label: 'DeepSeek' },
@@ -236,7 +236,7 @@ async function importDesktopOnDevice(bytes: Uint8Array) {
     const tmpRel = `backup/in-desktop-${Date.now()}.db`;
     cardFiles.write(tmpRel, dbBytes);
     (db() as unknown as { reopenDbFile(p: string): void }).reopenDbFile(cardFiles.root() + '/' + tmpRel);
-    const { buildSearchText } = await import('../services/search');
+    const { buildSearchText } = await import('../src/services/search');
     for (const c of await db().allByCreatedAsc()) {
       const remap = (p: string) => (!p ? '' : (nameMap.get(p.split('/').pop() ?? p) ?? p));
       await db().update(c.id, {

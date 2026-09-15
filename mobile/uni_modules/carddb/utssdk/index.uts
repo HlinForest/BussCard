@@ -1,0 +1,6 @@
+/**
+ * carddb 入口：公共逻辑（类型/SQL/迁移/事务）。
+ * 平台实现由 TS 层按平台直引（app-android / app-ios / app-harmony 下的 index.uts），
+ * 各自独立 export const nativeDb；CLI 单文件编译也以平台文件为入口。
+ */
+export * from './common.uts';
