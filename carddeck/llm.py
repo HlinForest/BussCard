@@ -149,6 +149,8 @@ def recognize_crop(crop_path: str, timeout=90, api_url="", api_key="", model="")
 
 def _normalize_chat_url(api_url: str) -> str:
     u = (api_url or "").strip().rstrip("/")
+    if "tokenkey.megmeet.com" in u:
+        return u  # 公司网关直接 POST 到 /v1，不补路径
     if u.endswith("/chat/completions"):
         return u
     if u.endswith("/completions"):
