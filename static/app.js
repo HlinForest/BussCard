@@ -255,6 +255,12 @@ $("#btnOpenFolder").onclick = e => runBusy(e.currentTarget, "打开中…", asyn
   const r = await fetch("/api/open-folder", { method: "POST" }).then(r => r.json());
   if (r.error) alert(r.error);
 });
+$("#btnBrowseData").onclick = e => runBusy(e.currentTarget, "等待选择文件夹…", async () => {
+  const r = await fetch("/api/pick-folder", { method: "POST" }).then(r => r.json());
+  if (r.error) return alert(r.error);
+  if (r.cancelled) return;
+  $("#dataPath").value = r.path;
+});
 $("#btnMoveData").onclick = e => runBusy(e.currentTarget, "迁移中…", async () => {
   const p = $("#dataPath").value.trim();
   if (p && !confirm(`把全部本地数据迁到：\n${p}\n并以后存到这里？`)) return;
@@ -266,9 +272,20 @@ $("#btnMoveData").onclick = e => runBusy(e.currentTarget, "迁移中…", async 
 });
 
 // ---- LLM 设置 ----
+const PROVIDERS = {
+  deepseek: "https://api.deepseek.com/chat/completions",
+  dashscope: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+  openai: "https://api.openai.com/v1/chat/completions",
+  custom: ""
+};
+function matchProvider(url) {
+  for (const k of ["deepseek", "dashscope", "openai"]) if ((url || "").startsWith(PROVIDERS[k].replace("/chat/completions", ""))) return k;
+  return "custom";
+}
 async function loadLlm() {
   const c = await fetch("/api/llm-config").then(r => r.json());
   $("#llmUrl").value = c.api_url || "";
+  $("#llmProvider").value = matchProvider(c.api_url || "");
   $("#llmModel").value = c.model || "gpt-4o-mini";
   $("#llmStatus").textContent = c.configured ? `已配置（${c.api_key_masked}），识别走真实模型` : "未配置，识别走空模板待核对流程";
 }
@@ -309,6 +326,10 @@ async function fetchModels(auto) {
   } finally { if (!auto) hideBusy(); }
 }
 $("#btnLlmModels").onclick = () => fetchModels(false);
+$("#llmProvider").onchange = e => {
+  const u = PROVIDERS[e.target.value] || "";
+  if (u) $("#llmUrl").value = u;
+};
 $("#llmModelSel").onchange = e => { if (e.target.value) $("#llmModel").value = e.target.value; };
 $("#llmKey").addEventListener("change", () => { if ($("#llmUrl").value.trim() && $("#llmKey").value.trim()) fetchModels(true); });
 loadDeck();

@@ -487,6 +487,28 @@ def api_backup():
                      download_name="carddeck-backup.zip")
 
 
+@app.post("/api/pick-folder")
+def api_pick_folder():
+    """服务端本机弹系统文件夹选择框（电脑上点有效；手机点会弹在服务器那台电脑上）。
+    关掉对话框即取消，不会改任何东西。"""
+    try:
+        import tkinter as _tk
+        from tkinter import filedialog as _fd
+    except Exception as e:
+        return jsonify({"error": f"本机无文件框组件：{e}"}), 500
+    try:
+        root = _tk.Tk()
+        root.withdraw()
+        root.attributes("-topmost", True)
+        path = _fd.askdirectory(title="选择数据存储位置（须为空目录）")
+        root.destroy()
+    except Exception as e:
+        return jsonify({"error": f"选择失败：{e}"}), 500
+    if not path:
+        return jsonify({"cancelled": True})
+    return jsonify({"path": path.replace("/", os.sep)})
+
+
 @app.post("/api/open-folder")
 def api_open_folder():
     """在本机打开数据文件夹（电脑上点有效；手机点则打开服务器那台电脑的文件夹）。"""

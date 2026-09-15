@@ -6,7 +6,7 @@
 <title>名片 CardDeck MVP</title>
 <link rel="stylesheet" href="/static/style.css">
 <link rel="manifest" href="/static/manifest.webmanifest">
-<meta name="theme-color" content="#e9ebed">
+<meta name="theme-color" content="#002FA7">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -57,7 +57,7 @@
 </tr></thead><tbody></tbody></table></div></section>
 <section id="tab-data" class="tab"><h2>本机数据（存在哪、占多大）</h2>
 <div><button id="btnStorage">刷新</button> <button id="btnBackup">一键备份下载</button> <button id="btnOpenFolder">打开文件夹</button></div>
-<div class="row"><input id="dataPath" placeholder="自定义存储位置，如 D:/CardDeckData（空=恢复默认）" style="width:min(420px,100%)"><button id="btnMoveData">保存并迁移</button></div>
+<div class="row"><input id="dataPath" placeholder="自定义存储位置，可点浏览选择（空=恢复默认）" style="width:min(420px,100%)"><button id="btnBrowseData">浏览…</button><button id="btnMoveData">保存并迁移</button></div>
 <div id="storage" style="margin-top:8px"></div>
 <div class="muted">备份即整个 data 文件夹（含联系人库、原图、LLM Key）；换电脑时把备份解压为新 exe 旁的 data 文件夹即可迁移。手机上点“打开文件夹”会打开服务器那台电脑的目录。</div></section>
 <div id="modal" class="modal" hidden><div class="sheet">
@@ -66,9 +66,15 @@
 </div></div>
 <div id="busy" class="busy" hidden><div class="spinner"></div><div id="busyText">处理中…</div></div>
 <section id="tab-settings" class="tab"><h2>LLM 设置（视觉识别接口，OpenAI 兼容）</h2>
-<div class="muted">填你的网关地址 + Key + 模型名，保存后即时生效（存本机 data/llm_config.json，不展示完整 Key）。URL 要填到 /chat/completions（只填域名会自动补）。名片识别必须用<u>视觉模型</u>：DeepSeek 官方只有 <code>deepseek-v4-flash-vision-exp</code> 支持图片（deepseek-chat/reasoner、v4-flash/v4-pro 是纯文本，会 400），百炼用 <code>qwen-vl-max</code>。不填也能用，走空模板待核对流程。</div>
+<div class="muted">先选服务商自动填地址，再填 Key，模型点获取列表或手填（须用支持看图的视觉模型，纯文本模型会 400）。保存后即时生效，Key 存本机不展示完整。不填也能用，走空模板待核对流程。</div>
 <div style="display:grid;gap:8px;max-width:640px;margin-top:8px">
-<label>API URL（/chat/completions）<input id="llmUrl" placeholder="https://你的网关/v1/chat/completions" style="width:100%"></label>
+<label>服务商<select id="llmProvider" style="width:100%">
+<option value="deepseek">DeepSeek</option>
+<option value="dashscope">阿里百炼</option>
+<option value="openai">OpenAI</option>
+<option value="custom">自定义网关</option>
+</select></label>
+<label>API URL（/chat/completions）<input id="llmUrl" placeholder="选服务商自动填" style="width:100%"></label>
 <label>API Key<input id="llmKey" type="password" placeholder="sk-..." style="width:100%" autocomplete="off"></label>
 <label>模型（可手填）<input id="llmModel" placeholder="如 deepseek-v4-flash-vision-exp / qwen-vl-max" style="width:100%"></label>
 <label>模型下拉选择<select id="llmModelSel" style="width:100%"><option value="">请先点“获取模型列表”</option></select></label>

@@ -1,9 +1,9 @@
-/* BussCard 月白鎏金：月白纸加墨字加鎏金单强调。静奢工具向，手机优先。 */
+/* BussCard 克莱因蓝：月白纸加墨字加克莱因蓝单强调。静奢工具向，手机优先。 */
 :root{
   --paper:#e9ebed; --card:#fafbfb; --card-deep:#eff1f3;
   --ink:#1d2126; --muted:#5c6670; --faint:#8b939c;
   --line:#d3d8dd; --hairline:#e3e7eb;
-  --gold:#b08d2e; --gold-deep:#7a5f1e; --warn:#9a5b12;
+  --klein:#002FA7; --warn:#9a5b12;
   --serif:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC",Georgia,serif;
   --sans:system-ui,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
   --r:12px;
@@ -14,7 +14,7 @@ body{margin:0;font-family:var(--sans);background:var(--paper);color:var(--ink);f
 /* 顶栏：纸面加下 hairline，标题宋体加鎏金印章 */
 header{background:var(--paper);border-bottom:1px solid var(--line);padding:12px 16px 0;position:sticky;top:0;z-index:10}
 header h1{margin:0 0 10px;font-family:var(--serif);font-size:21px;font-weight:700;letter-spacing:.1em;display:flex;align-items:center;gap:10px}
-header h1::before{content:"卡";display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:var(--gold);color:var(--ink);font-size:17px;border-radius:6px;font-weight:400}
+header h1::before{content:"卡";display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:var(--klein);color:#fff;font-size:17px;border-radius:6px;font-weight:400}
 nav{display:flex;gap:4px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
 nav button{flex:none;margin:0;border:1px solid transparent;background:transparent;color:var(--muted);border-radius:9px;padding:7px 13px;font-size:14px;white-space:nowrap}
@@ -26,14 +26,14 @@ h2{font-family:var(--serif);font-size:18px;margin:4px 0 12px;letter-spacing:.06e
 /* 按钮：纸面描边默认，鎏金为主，删除走静默描边加确认框兜底 */
 button{font-family:var(--sans);font-size:14px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;transition:background .15s ease,transform .08s ease}
 button:active{transform:scale(.97)}
-button.primary{background:var(--gold);border-color:var(--gold-deep);color:var(--ink);padding:10px 18px;font-weight:600}
+button.primary{background:var(--klein);border-color:var(--klein);color:#fff;padding:10px 18px;font-weight:600}
 button.danger-text{color:var(--muted);border-color:var(--line)}
 button:disabled{opacity:.5;cursor:wait;transform:none}
-:focus-visible{outline:2px solid var(--gold-deep);outline-offset:2px}
+:focus-visible{outline:2px solid var(--klein);outline-offset:2px}
 input,select,textarea{font-family:var(--sans);font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 9px}
-input:focus,select:focus,textarea:focus{border-color:var(--gold-deep);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--klein);outline:none}
 input[type=file]{border-style:dashed;background:transparent}
-input[type=checkbox],input[type=radio]{accent-color:var(--gold-deep);width:16px;height:16px}
+input[type=checkbox],input[type=radio]{accent-color:var(--klein);width:16px;height:16px}
 label{font-size:14px;color:var(--muted)}
 .muted{color:var(--faint);font-size:13px}
 code{background:var(--card-deep);border:1px solid var(--hairline);border-radius:6px;padding:0 5px;font-size:12.5px}
@@ -43,7 +43,7 @@ code{background:var(--card-deep);border:1px solid var(--hairline);border-radius:
 #boxLayer{position:absolute;inset:0}
 .box{position:absolute;border:2px solid var(--ink);background:rgba(29,33,38,.08);cursor:move}
 .box .tag{position:absolute;top:-22px;left:0;background:var(--ink);color:#f2f4f5;font-size:12px;padding:1px 7px;border-radius:6px}
-.box .del{position:absolute;top:-24px;right:0;background:var(--gold-deep);border-color:var(--gold-deep);color:#fff;font-size:12px;padding:1px 8px;border-radius:6px}
+.box .del{position:absolute;top:-24px;right:0;background:var(--klein);border-color:var(--klein);color:#fff;font-size:12px;padding:1px 8px;border-radius:6px}
 .box .rs{position:absolute;right:-8px;bottom:-8px;width:16px;height:16px;background:var(--card);border:2px solid var(--ink);border-radius:50%;cursor:nwse-resize}
 #detectHint{font-size:13px;color:var(--muted)}
 details{margin:10px 0;color:var(--muted)}
@@ -61,13 +61,13 @@ summary{cursor:pointer;font-size:14px}
 .card:active{transform:scale(.98)}
 .carddel{position:absolute;top:8px;right:8px;z-index:2;background:var(--card);border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:2px 10px;font-size:12px}
 /* Anki 文本小卡：纸面加左侧鎏金关键线加印章状态 */
-.acard{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:13px 15px;box-shadow:0 1px 0 rgba(29,33,38,.06)}
+.acard{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--klein);border-radius:10px;padding:13px 15px;box-shadow:0 1px 0 rgba(29,33,38,.06)}
 .acard .aname{font-family:var(--serif);font-size:21px;font-weight:700;margin:0 0 2px;letter-spacing:.04em}
 .acard .aco{color:var(--muted);font-size:13.5px;margin-bottom:7px}
 .acard .arow{font-size:14.5px;font-variant-numeric:tabular-nums;margin:1px 0}
 .acard .abiz{font-size:13px;color:var(--muted);margin-top:7px;border-top:1px dashed var(--line);padding-top:6px}
 .acard .atags{font-size:12px;color:var(--faint);margin-top:5px}
-.acard .astatus{display:inline-block;font-family:var(--serif);font-size:12px;color:var(--gold-deep);border:1px solid var(--gold);border-radius:6px;padding:0 8px;margin-top:9px;transform:rotate(-1.5deg)}
+.acard .astatus{display:inline-block;font-family:var(--serif);font-size:12px;color:var(--klein);border:1px solid var(--klein);border-radius:6px;padding:0 8px;margin-top:9px;transform:rotate(-1.5deg)}
 .acard .astatus.ok{color:var(--ink);border-color:var(--ink)}
 .draft .acard{box-shadow:none}
 .nocrop{background:var(--card-deep);border:1px dashed var(--line);border-radius:8px;min-height:120px;display:flex;align-items:center;justify-content:center;color:var(--faint)}
@@ -80,8 +80,8 @@ th{background:var(--card-deep);font-weight:600;position:sticky;top:0;white-space
 tbody tr:active{background:var(--card-deep)}
 td input{width:132px;padding:5px 7px}
 /* 查重组 */
-.dup{border:1px solid var(--line);background:var(--card);border-left:3px solid var(--gold);border-radius:10px;padding:10px 12px;margin:8px 0}
-.dup .why{color:var(--gold-deep);font-size:13px;margin-bottom:6px}
+.dup{border:1px solid var(--line);background:var(--card);border-left:3px solid var(--klein);border-radius:10px;padding:10px 12px;margin:8px 0}
+.dup .why{color:var(--klein);font-size:13px;margin-bottom:6px}
 .dup label{display:block;font-size:14px;padding:3px 0;cursor:pointer;color:var(--ink)}
 /* 搜索 */
 #deckQ,#tblQ{width:min(300px,100%);padding:9px 12px}
