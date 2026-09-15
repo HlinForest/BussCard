@@ -23,7 +23,8 @@
 </nav></header>
 <main>
 <section id="tab-scan" class="tab active">
-<h2>拍照入库（一图多卡，2～8 张效果最好，留空隙、无遮挡）</h2>
+<p class="kicker">CAPTURE</p>
+<div class="step"><span class="n">01</span><h2>拍照上传（一图多卡，留空隙、无遮挡）</h2></div>
 <input type="file" id="photo" accept="image/*" capture="environment">
 <button id="btnQuick" class="primary">一键上传识别</button>
 <span id="detectHint"></span>
@@ -33,15 +34,15 @@
 <button id="btnAddBox">补框</button>
 <button id="btnRecognize" disabled>按框逐张识别</button></div>
 </details>
-<h2>核对（修正后批量保存；疑似重复只提示不自动合并）</h2>
+<div class="step"><span class="n">02</span><h2>核对（修正后批量保存；疑似重复只提示不自动合并）</h2></div>
 <div id="drafts"></div>
 <button id="btnSave" disabled>批量保存</button>
 </section>
-<section id="tab-deck" class="tab"><h2>Card Deck（点卡片看大图详情）</h2>
+<section id="tab-deck" class="tab"><p class="kicker">DECK</p><h2>Card Deck（点卡片看大图详情）</h2>
 <div class="row"><input id="deckQ" placeholder="搜姓名 / 公司 / 尾号 / 业务，回车即搜"><button id="btnDeckSearch">搜索</button><button id="btnDupDeck">查找重复</button></div>
 <div id="dupPanelDeck"></div>
 <div id="deck" class="deck"></div></section>
-<section id="tab-table" class="tab"><h2>表格（与卡片同一份数据；Excel 是快照导出）</h2>
+<section id="tab-table" class="tab"><p class="kicker">TABLE</p><h2>表格（与卡片同一份数据；Excel 是快照导出）</h2>
 <div class="row">
 <button id="btnReloadTable">刷新</button>
 <button id="btnExportAll">导出全部 Excel</button>
@@ -55,7 +56,7 @@
 <th><input type="checkbox" id="chkAll"></th><th>姓名</th><th>公司</th><th>职位</th>
 <th>电话1</th><th>电话2</th><th>邮箱</th><th>业务/备注</th><th>标签</th><th>状态</th><th>操作</th>
 </tr></thead><tbody></tbody></table></div></section>
-<section id="tab-data" class="tab"><h2>本机数据（存在哪、占多大）</h2>
+<section id="tab-data" class="tab"><p class="kicker">STORAGE</p><h2>本机数据（存在哪、占多大）</h2>
 <div><button id="btnStorage">刷新</button> <button id="btnBackup">一键备份下载</button> <button id="btnOpenFolder">打开文件夹</button></div>
 <div class="row"><input id="dataPath" placeholder="自定义存储位置，可点浏览选择（空=恢复默认）" style="width:min(420px,100%)"><button id="btnBrowseData">浏览…</button><button id="btnMoveData">保存并迁移</button></div>
 <div id="storage" style="margin-top:8px"></div>
@@ -65,7 +66,7 @@
 <div id="sheetBody"></div>
 </div></div>
 <div id="busy" class="busy" hidden><div class="spinner"></div><div id="busyText">处理中…</div></div>
-<section id="tab-settings" class="tab"><h2>LLM 设置（视觉识别接口，OpenAI 兼容）</h2>
+<section id="tab-settings" class="tab"><p class="kicker">MODEL</p><h2>LLM 设置（视觉识别接口，OpenAI 兼容）</h2>
 <div class="muted">先选服务商自动填地址，再填 Key，模型点获取列表或手填（须用支持看图的视觉模型，纯文本模型会 400）。保存后即时生效，Key 存本机不展示完整。不填也能用，走空模板待核对流程。</div>
 <div style="display:grid;gap:8px;max-width:640px;margin-top:8px">
 <label>服务商<select id="llmProvider" style="width:100%">
