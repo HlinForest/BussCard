@@ -188,19 +188,38 @@ def _http_error_detail(e: Exception) -> str:
     return str(e)[:300]
 
 
+def _models_candidates(api_url: str) -> list:
+    first = _models_url(api_url)
+    cands = [first]
+    # /v1/models 与 /models 互为兜底（不同网关实现路径不同）
+    if "/v1/models" in first:
+        alt = first.replace("/v1/models", "/models")
+        if alt not in cands:
+            cands.append(alt)
+    elif first.rstrip("/").endswith("/models"):
+        base = first.rstrip("/")[: -len("/models")]
+        alt = base + "/v1/models"
+        if alt not in cands:
+            cands.append(alt)
+    return cands
+
+
 def list_models(api_url: str, api_key: str, timeout=30) -> dict:
     """OpenAI 兼容 GET /models。返回 {"models": [id...]}。"""
     import requests as _rq
-    url = _models_url(_normalize_chat_url(api_url))
-    try:
-        r = _rq.get(url, headers={"Authorization": f"Bearer {api_key}"}, timeout=timeout)
-        r.raise_for_status()
-    except Exception as e:
-        raise RuntimeError(_http_error_detail(e))
-    data = r.json()
-    items = data.get("data", []) if isinstance(data, dict) else []
-    ids = sorted({str(x.get("id")) for x in items if isinstance(x, dict) and x.get("id")})
-    return {"models": ids, "url": url}
+    errs = []
+    for url in _models_candidates(_normalize_chat_url(api_url)):
+        try:
+            r = _rq.get(url, headers={"Authorization": f"Bearer {api_key}"}, timeout=timeout)
+            r.raise_for_status()
+        except Exception as e:
+            errs.append(f"{url}：{_http_error_detail(e)}")
+            continue
+        data = r.json()
+        items = data.get("data", []) if isinstance(data, dict) else []
+        ids = sorted({str(x.get("id")) for x in items if isinstance(x, dict) and x.get("id")})
+        return {"models": ids, "url": url}
+    raise RuntimeError("；".join(errs)[:500] or "网关未提供模型列表接口，请手填模型名")
 
 
 def test_connection(api_url: str, api_key: str, model: str, timeout=30) -> dict:
