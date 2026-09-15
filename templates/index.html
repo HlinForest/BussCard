@@ -6,7 +6,7 @@
 <title>名片 CardDeck MVP</title>
 <link rel="stylesheet" href="/static/style.css">
 <link rel="manifest" href="/static/manifest.webmanifest">
-<meta name="theme-color" content="#2563eb">
+<meta name="theme-color" content="#22261f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -26,7 +26,7 @@
 <section id="tab-scan" class="tab active">
 <h2>拍照入库（一图多卡，2～8 张效果最好，留空隙、无遮挡）</h2>
 <input type="file" id="photo" accept="image/*" capture="environment">
-<button id="btnQuick" style="background:#2563eb;color:#fff;border-color:#2563eb">一键上传识别</button>
+<button id="btnQuick" class="primary">一键上传识别</button>
 <span id="detectHint"></span>
 <div id="photoWrap"><img id="photoImg" alt=""><div id="boxLayer"></div></div>
 <details><summary>手动微调（仅一键漏卡/串卡时用）</summary>
@@ -64,7 +64,7 @@
 <div id="storage" style="margin-top:8px"></div>
 <div class="muted">备份即整个 data 文件夹（含联系人库、原图、LLM Key）；换电脑时把备份解压为新 exe 旁的 data 文件夹即可迁移。手机上点“打开文件夹”会打开服务器那台电脑的目录。</div></section>
 <div id="modal" class="modal" hidden><div class="sheet">
-<button id="btnSheetDel" style="color:#dc2626">删除</button> <button id="btnClose">关闭 ×</button>
+<button id="btnSheetDel" class="danger-text">删除</button> <button id="btnClose">关闭 ×</button>
 <div id="sheetBody"></div>
 </div></div>
 <div id="busy" class="busy" hidden><div class="spinner"></div><div id="busyText">处理中…</div></div>
