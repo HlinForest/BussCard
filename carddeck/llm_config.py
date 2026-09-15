@@ -4,14 +4,17 @@ import os
 
 from .paths import data_dir
 
-CONFIG_PATH = os.path.join(data_dir(), "llm_config.json")
+
+def config_path() -> str:
+    return os.path.join(data_dir(), "llm_config.json")
 
 
 def get_llm_config():
     cfg = {}
+    cp = config_path()
     try:
-        if os.path.exists(CONFIG_PATH):
-            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+        if os.path.exists(cp):
+            with open(cp, "r", encoding="utf-8") as f:
                 cfg = json.load(f) or {}
     except Exception:
         cfg = {}
@@ -23,8 +26,9 @@ def get_llm_config():
 
 
 def save_llm_config(api_url: str, api_key: str, model: str):
-    os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
-    with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+    cp = config_path()
+    os.makedirs(os.path.dirname(cp), exist_ok=True)
+    with open(cp, "w", encoding="utf-8") as f:
         json.dump({"api_url": api_url.strip(), "api_key": api_key.strip(),
                    "model": (model or "gpt-4o-mini").strip()}, f, ensure_ascii=False)
 

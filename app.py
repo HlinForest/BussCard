@@ -17,12 +17,9 @@ from carddeck.detector import crop_box, detect_cards
 from carddeck.excel_export import export_xlsx
 from carddeck.llm import recognize_crop, recognize_photo_multi
 from carddeck.llm_config import get_llm_config, public_llm_config, save_llm_config
-from carddeck.paths import data_dir, res_path
+from carddeck.paths import crop_dir, data_dir, res_path, upload_dir
 from carddeck.search import hybrid_search
 from carddeck.validate import find_duplicates, validate_fields
-
-UPLOAD_DIR = os.path.join(data_dir(), "uploads")
-CROP_DIR = os.path.join(data_dir(), "crops")
 
 app = Flask(__name__, static_folder=res_path("static"), template_folder=res_path("templates"))
 app.config["MAX_CONTENT_LENGTH"] = 30 * 1024 * 1024
@@ -36,12 +33,12 @@ def index():
 
 @app.get("/uploads/<path:name>")
 def uploads(name):
-    return send_from_directory(UPLOAD_DIR, name)
+    return send_from_directory(upload_dir(), name)
 
 
 @app.get("/crops/<path:name>")
 def crops(name):
-    return send_from_directory(CROP_DIR, name)
+    return send_from_directory(crop_dir(), name)
 
 
 @app.post("/api/upload")
@@ -53,7 +50,7 @@ def api_upload():
     if ext not in (".jpg", ".jpeg", ".png", ".webp"):
         ext = ".jpg"
     fname = f"{int(time.time())}_{uuid.uuid4().hex[:8]}{ext}"
-    path = os.path.join(UPLOAD_DIR, fname)
+    path = os.path.join(upload_dir(), fname)
     f.save(path)
     boxes = detect_cards(path)
     if not boxes:  # 漏检兜底：整图当一张，人工可再补框
@@ -77,14 +74,14 @@ def api_recognize():
         return jsonify({"error": "缺少 photo_url/boxes"}), 400
     if len(boxes) > 10:
         return jsonify({"error": "单张照片最多 10 张，请分批拍摄"}), 400
-    src = os.path.join(UPLOAD_DIR, os.path.basename(photo_url))
+    src = os.path.join(upload_dir(), os.path.basename(photo_url))
     if not os.path.exists(src):
         return jsonify({"error": "原图不存在"}), 404
     conn = db.get_db()
     drafts = []
     for i, b in enumerate(boxes):
         crop_name = f"{int(time.time())}_{uuid.uuid4().hex[:6]}_{i}.jpg"
-        crop_path = os.path.join(CROP_DIR, crop_name)
+        crop_path = os.path.join(crop_dir(), crop_name)
         try:
             crop_box(src, b, crop_path)
         except Exception as e:
@@ -125,7 +122,7 @@ def api_recognize_all():
     photo_url = data.get("photo_url", "")
     if not photo_url:
         return jsonify({"error": "缺少 photo_url"}), 400
-    src = os.path.join(UPLOAD_DIR, os.path.basename(photo_url))
+    src = os.path.join(upload_dir(), os.path.basename(photo_url))
     if not os.path.exists(src):
         return jsonify({"error": "原图不存在"}), 404
     conn = db.get_db()
@@ -153,7 +150,7 @@ def api_quick():
     if ext not in (".jpg", ".jpeg", ".png", ".webp"):
         ext = ".jpg"
     fname = f"{int(time.time())}_{uuid.uuid4().hex[:8]}{ext}"
-    path = os.path.join(UPLOAD_DIR, fname)
+    path = os.path.join(upload_dir(), fname)
     f.save(path)
     photo_url = f"/uploads/{fname}"
     conn = db.get_db()
@@ -383,9 +380,6 @@ def api_llm_models():
 @app.get("/api/storage")
 def api_storage():
     """本机数据位置与占用：路径、大小、条数，一目了然。"""
-    from carddeck.db import DB_PATH
-    from carddeck.llm_config import CONFIG_PATH
-    from carddeck.paths import data_dir
 
     def dir_stat(p):
         n, s = 0, 0
@@ -404,25 +398,75 @@ def api_storage():
         return round(b / 1048576, 1)
 
     dd = data_dir()
+    from carddeck.db import db_path
+    from carddeck.llm_config import config_path
+    db_p, cfg_p = db_path(), config_path()
     conn = db.get_db()
     contacts = conn.execute("SELECT COUNT(*) c FROM contacts").fetchone()["c"]
     batches = conn.execute("SELECT COUNT(*) c FROM batches").fetchone()["c"]
     conn.close()
-    ups, crs = dir_stat(UPLOAD_DIR), dir_stat(CROP_DIR)
+    ups, crs = dir_stat(upload_dir()), dir_stat(crop_dir())
     try:
-        db_size = os.path.getsize(DB_PATH)
+        db_size = os.path.getsize(db_p)
     except OSError:
         db_size = 0
+    from carddeck.paths import custom_path
     return jsonify({
         "data_dir": dd,
-        "db_path": DB_PATH,
+        "custom": bool(custom_path()),
+        "db_path": db_p,
         "db_mb": fmt_mb(db_size),
         "contacts": contacts,
         "batches": batches,
         "uploads": {"count": ups["count"], "mb": fmt_mb(ups["size"])},
-        "llm_config": {"path": CONFIG_PATH, "exists": os.path.exists(CONFIG_PATH)},
+        "llm_config": {"path": cfg_p, "exists": os.path.exists(cfg_p)},
         "total_mb": fmt_mb(db_size + ups["size"] + crs["size"]),
     })
+
+
+@app.post("/api/storage-path")
+def api_storage_path():
+    """自定义本机存储位置：校验后迁移现有数据并切换，无需重启。空路径则恢复默认。"""
+    import shutil
+    from carddeck.paths import base_dir, custom_path, set_custom_path
+    data = request.get_json(force=True)
+    target = (data.get("path") or "").strip().strip('"')
+    from carddeck.paths import base_dir, custom_path, set_custom_path
+    if not target:
+        if not custom_path():
+            from carddeck.paths import data_dir as _dd0
+            return jsonify({"ok": True, "data_dir": _dd0(), "custom": False})
+        target = os.path.join(base_dir(), "data")
+    if os.environ.get("CARDDECK_DATA", "").strip():
+        return jsonify({"error": "当前由环境变量 CARDDECK_DATA 指定位置，页面改不了，先清空该变量"}), 400
+    target = os.path.abspath(target)
+    src = data_dir()
+    if os.path.normcase(target) == os.path.normcase(src):
+        return jsonify({"ok": True, "data_dir": src, "custom": bool(custom_path())})
+    # 拒绝套娃：目标不能是源的子目录或父目录
+    if (os.path.normcase(target).startswith(os.path.normcase(src) + os.sep)
+            or os.path.normcase(src).startswith(os.path.normcase(target) + os.sep)):
+        return jsonify({"error": "目标不能是当前数据目录的子目录或父目录"}), 400
+    try:
+        os.makedirs(target, exist_ok=True)
+    except Exception as e:
+        return jsonify({"error": f"建目录失败：{e}"}), 400
+    if os.listdir(target):
+        return jsonify({"error": "目标目录非空，请选空目录（避免覆盖别人的数据）"}), 400
+    try:
+        for name in os.listdir(src):
+            shutil.move(os.path.join(src, name), os.path.join(target, name))
+    except Exception as e:
+        return jsonify({"error": f"迁移失败（原数据未删）：{e}"}), 500
+    try:
+        set_custom_path("" if os.path.normcase(target) == os.path.normcase(os.path.join(base_dir(), "data")) else target)
+    except Exception as e:
+        return jsonify({"error": f"写位置指针失败：{e}（数据已迁到 {target}，手动把 datapath.txt 放到 {base_dir()} 可恢复）"}), 500
+    db.init_db()
+    from carddeck.paths import data_dir as _dd
+    if _dd() != target:
+        return jsonify({"error": "切换未生效"}), 500
+    return jsonify({"ok": True, "data_dir": target, "custom": True})
 
 
 @app.get("/api/backup.zip")

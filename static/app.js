@@ -240,8 +240,9 @@ $("#btnDelSel").onclick = e => runBusy(e.currentTarget, "删除中…", async ()
 // ---- 本机数据 ----
 async function loadStorage() {
   const s = await fetch("/api/storage").then(r => r.json());
+  if ($("#dataPath") && !$("#dataPath").value) $("#dataPath").value = s.custom ? s.data_dir : "";
   $("#storage").innerHTML = `<div class="sheet" style="max-width:640px"><div class="kv">
-  <b>数据文件夹</b><span>${esc(s.data_dir)}</span>
+  <b>数据文件夹</b><span>${esc(s.data_dir)}${s.custom ? "（自定义）" : "（默认）"}</span>
   <b>联系人库</b><span>${esc(s.db_path)}（${s.db_mb} MB，${s.contacts} 条联系人 / ${s.batches} 次拍照）</span>
   <b>原图</b><span>${s.uploads.count} 张，共 ${s.uploads.mb} MB</span>
   <b>LLM配置</b><span>${s.llm_config.exists ? esc(s.llm_config.path) + "（已配置）" : "未配置，去 LLM设置 页填写"}</span>
@@ -253,6 +254,15 @@ $("#btnBackup").onclick = () => location.href = "/api/backup.zip";
 $("#btnOpenFolder").onclick = e => runBusy(e.currentTarget, "打开中…", async () => {
   const r = await fetch("/api/open-folder", { method: "POST" }).then(r => r.json());
   if (r.error) alert(r.error);
+});
+$("#btnMoveData").onclick = e => runBusy(e.currentTarget, "迁移中…", async () => {
+  const p = $("#dataPath").value.trim();
+  if (p && !confirm(`把全部本地数据迁到：\n${p}\n并以后存到这里？`)) return;
+  if (!p && !confirm("迁回默认 data 文件夹？")) return;
+  const r = await fetch("/api/storage-path", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ path: p }) }).then(r => r.json());
+  if (r.error) return alert(r.error);
+  alert("已切换到：" + r.data_dir);
+  loadStorage(); loadDeck();
 });
 
 // ---- LLM 设置 ----

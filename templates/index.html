@@ -57,6 +57,7 @@
 </tr></thead><tbody></tbody></table></div></section>
 <section id="tab-data" class="tab"><h2>本机数据（存在哪、占多大）</h2>
 <div><button id="btnStorage">刷新</button> <button id="btnBackup">一键备份下载</button> <button id="btnOpenFolder">打开文件夹</button></div>
+<div class="row"><input id="dataPath" placeholder="自定义存储位置，如 D:/CardDeckData（空=恢复默认）" style="width:min(420px,100%)"><button id="btnMoveData">保存并迁移</button></div>
 <div id="storage" style="margin-top:8px"></div>
 <div class="muted">备份即整个 data 文件夹（含联系人库、原图、LLM Key）；换电脑时把备份解压为新 exe 旁的 data 文件夹即可迁移。手机上点“打开文件夹”会打开服务器那台电脑的目录。</div></section>
 <div id="modal" class="modal" hidden><div class="sheet">

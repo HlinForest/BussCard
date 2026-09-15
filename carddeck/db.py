@@ -6,7 +6,9 @@ import time
 
 from .paths import data_dir
 
-DB_PATH = os.environ.get("CARDDECK_DB", os.path.join(data_dir(), "carddeck.db"))
+
+def db_path() -> str:
+    return os.environ.get("CARDDECK_DB", os.path.join(data_dir(), "carddeck.db"))
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS batches (
@@ -47,8 +49,9 @@ CREATE INDEX IF NOT EXISTS idx_contacts_email ON contacts(email);
 
 
 def get_db():
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
+    p = db_path()
+    os.makedirs(os.path.dirname(p), exist_ok=True)
+    conn = sqlite3.connect(p)
     conn.row_factory = sqlite3.Row
     return conn
 
