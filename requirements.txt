@@ -1,0 +1,7 @@
+Flask==2.2.5
+opencv-python
+Pillow
+openpyxl
+RapidFuzz
+requests
+python-dotenv
