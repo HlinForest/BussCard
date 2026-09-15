@@ -26,6 +26,13 @@ app.config["MAX_CONTENT_LENGTH"] = 30 * 1024 * 1024
 db.init_db()
 
 
+@app.get("/sw.js")
+def sw():
+    resp = send_from_directory(res_path("static"), "sw.js")
+    resp.headers["Service-Worker-Allowed"] = "/"
+    return resp
+
+
 @app.get("/")
 def index():
     return render_template("index.html")
