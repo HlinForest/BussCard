@@ -84,10 +84,8 @@ td input{width:132px;padding:5px 7px}
 .dup .why{color:var(--gold-deep);font-size:13px;margin-bottom:6px}
 .dup label{display:block;font-size:14px;padding:3px 0;cursor:pointer;color:var(--ink)}
 /* 搜索 */
-#q{width:min(560px,100%);padding:9px 12px}
-#results .hit{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:10px 12px;margin:8px 0;cursor:pointer}
-#results .hit:active{background:var(--card-deep)}
-#results .why{color:var(--muted);font-size:13px;margin-top:2px}
+#deckQ,#tblQ{width:min(300px,100%);padding:9px 12px}
+.card .why{font-size:12px;color:var(--muted);margin-top:6px}
 /* 本机数据 */
 #storage .sheet{max-width:660px}
 #storage .kv{grid-template-columns:96px 1fr;word-break:break-all}

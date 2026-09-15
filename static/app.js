@@ -148,21 +148,33 @@ async function delContact(id) {
   } finally { hideBusy(); }
   $("#modal").hidden = true; sheetContact = null;
   loadDeck();
-  if ($("#tab-search").classList.contains("active")) $("#btnSearch").onclick();
 }
 $("#btnSheetDel").onclick = () => { if (sheetContact && sheetContact.id) delContact(sheetContact.id); };
+let deckHits = [];
 async function loadDeck() {
-  contacts = await fetch("/api/contacts").then(r => r.json());
+  const q = ($("#deckQ").value || "").trim();
   const el = $("#deck");
-  el.innerHTML = contacts.map((c, i) => `<div class="card" data-i="${i}"><button class="carddel" data-id="${c.id}">删除</button>${miniCard(c)}</div>`).join("") || '<span class="muted">暂无数据，先去拍照入库</span>';
-  el.querySelectorAll(".card").forEach(d => d.onclick = () => openSheet(contacts[+d.dataset.i]));
+  if (q) {
+    deckHits = await fetch("/api/search?q=" + encodeURIComponent(q)).then(r => r.json());
+    el.innerHTML = deckHits.map((r, i) => { const c = r.contact; return `<div class="card" data-i="${i}"><button class="carddel" data-id="${c.id}">删除</button>${miniCard(c)}<div class="why">命中：${esc((r.reasons || []).join("；"))}</div></div>`; }).join("") || '<span class="muted">无结果，换个词试试（清空搜全部）</span>';
+    el.querySelectorAll(".card").forEach(d => d.onclick = () => openSheet(deckHits[+d.dataset.i].contact));
+  } else {
+    contacts = await fetch("/api/contacts").then(r => r.json());
+    el.innerHTML = contacts.map((c, i) => `<div class="card" data-i="${i}"><button class="carddel" data-id="${c.id}">删除</button>${miniCard(c)}</div>`).join("") || '<span class="muted">暂无数据，先去拍照入库</span>';
+    el.querySelectorAll(".card").forEach(d => d.onclick = () => openSheet(contacts[+d.dataset.i]));
+  }
   el.querySelectorAll(".carddel").forEach(b => b.onclick = e => { e.stopPropagation(); delContact(+b.dataset.id); });
 }
+$("#btnDeckSearch").onclick = e => runBusy(e.currentTarget, "搜索中…", loadDeck);
+$("#deckQ").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); $("#btnDeckSearch").click(); } };
 
 // ---- 表格 ----
 async function loadTable() {
-  contacts = await fetch("/api/contacts").then(r => r.json());
+  const q = ($("#tblQ").value || "").trim();
+  contacts = q ? (await fetch("/api/search?q=" + encodeURIComponent(q)).then(r => r.json())).map(r => r.contact)
+               : await fetch("/api/contacts").then(r => r.json());
   const tb = $("#tbl tbody"); tb.innerHTML = "";
+  if (q && !contacts.length) tb.innerHTML = `<tr><td colspan="11" class="muted">无结果，换个词试试（清空搜全部）</td></tr>`;
   contacts.forEach(c => {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td><input type="checkbox" data-id="${c.id}" class="sel"></td>
@@ -178,8 +190,13 @@ async function loadTable() {
     await fetch(`/api/contacts/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     alert("已保存");
   }));
+  tb.querySelectorAll("input[data-k]").forEach(i => i.onkeydown = e => {
+    if (e.key === "Enter") { e.preventDefault(); tb.querySelector(`[data-save="${i.dataset.id}"]`).click(); }
+  });
 }
 $("#btnReloadTable").onclick = e => runBusy(e.currentTarget, "加载中…", loadTable);
+$("#btnTblSearch").onclick = e => runBusy(e.currentTarget, "搜索中…", loadTable);
+$("#tblQ").onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); $("#btnTblSearch").click(); } };
 $("#chkAll").onchange = e => document.querySelectorAll(".sel").forEach(c => c.checked = e.target.checked);
 const selIds = () => [...document.querySelectorAll(".sel:checked")].map(c => c.dataset.id).join(",");
 $("#btnExportAll").onclick = () => location.href = "/api/export.xlsx";
@@ -218,17 +235,6 @@ $("#btnDelSel").onclick = e => runBusy(e.currentTarget, "删除中…", async ()
   if (!confirm("删除勾选？")) return;
   await fetch("/api/contacts/delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ids: s.split(",").map(Number) }) });
   loadTable();
-});
-
-// ---- 搜索 ----
-let lastResults = [];
-$("#btnSearch").onclick = () => runBusy($("#btnSearch"), "搜索中…", async () => {
-  const q = $("#q").value;
-  lastResults = await fetch("/api/search?q=" + encodeURIComponent(q)).then(r => r.json());
-  const box = $("#results");
-  box.innerHTML = lastResults.map((r, i) => { const c = r.contact; return `<div class="hit" data-i="${i}" style="cursor:pointer"><b>${c.name || '(待核对)'}</b> ${c.company || ''} ${c.title || ''} · ${c.phone1 || ''} ${c.email || ''}
-  <div class="why">命中：${(r.reasons || []).join('；')}（${r.score}）</div></div>`; }).join("") || "无结果";
-  box.querySelectorAll(".hit").forEach(h => h.onclick = () => openSheet(lastResults[+h.dataset.i].contact));
 });
 
 // ---- 本机数据 ----
