@@ -18,6 +18,7 @@ document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
   b.classList.add("active"); $("#tab-" + b.dataset.tab).classList.add("active");
   if (b.dataset.tab === "deck") loadDeck();
   if (b.dataset.tab === "table") loadTable();
+  if (b.dataset.tab === "data") loadStorage();
   if (b.dataset.tab === "settings") loadLlm();
 });
 
@@ -228,6 +229,24 @@ $("#btnSearch").onclick = () => runBusy($("#btnSearch"), "搜索中…", async (
   box.innerHTML = lastResults.map((r, i) => { const c = r.contact; return `<div class="hit" data-i="${i}" style="cursor:pointer"><b>${c.name || '(待核对)'}</b> ${c.company || ''} ${c.title || ''} · ${c.phone1 || ''} ${c.email || ''}
   <div class="why">命中：${(r.reasons || []).join('；')}（${r.score}）</div></div>`; }).join("") || "无结果";
   box.querySelectorAll(".hit").forEach(h => h.onclick = () => openSheet(lastResults[+h.dataset.i].contact));
+});
+
+// ---- 本机数据 ----
+async function loadStorage() {
+  const s = await fetch("/api/storage").then(r => r.json());
+  $("#storage").innerHTML = `<div class="sheet" style="max-width:640px"><div class="kv">
+  <b>数据文件夹</b><span>${esc(s.data_dir)}</span>
+  <b>联系人库</b><span>${esc(s.db_path)}（${s.db_mb} MB，${s.contacts} 条联系人 / ${s.batches} 次拍照）</span>
+  <b>原图</b><span>${s.uploads.count} 张，共 ${s.uploads.mb} MB</span>
+  <b>LLM配置</b><span>${s.llm_config.exists ? esc(s.llm_config.path) + "（已配置）" : "未配置，去 LLM设置 页填写"}</span>
+  <b>总占用</b><span>${s.total_mb} MB</span>
+  </div></div>`;
+}
+$("#btnStorage").onclick = e => runBusy(e.currentTarget, "加载中…", loadStorage);
+$("#btnBackup").onclick = () => location.href = "/api/backup.zip";
+$("#btnOpenFolder").onclick = e => runBusy(e.currentTarget, "打开中…", async () => {
+  const r = await fetch("/api/open-folder", { method: "POST" }).then(r => r.json());
+  if (r.error) alert(r.error);
 });
 
 // ---- LLM 设置 ----

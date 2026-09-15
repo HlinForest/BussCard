@@ -380,6 +380,88 @@ def api_llm_models():
         return jsonify({"error": f"获取模型列表失败：{e}"}), 502
 
 
+@app.get("/api/storage")
+def api_storage():
+    """本机数据位置与占用：路径、大小、条数，一目了然。"""
+    from carddeck.db import DB_PATH
+    from carddeck.llm_config import CONFIG_PATH
+    from carddeck.paths import data_dir
+
+    def dir_stat(p):
+        n, s = 0, 0
+        if os.path.isdir(p):
+            for root, _, files in os.walk(p):
+                for fn in files:
+                    fp = os.path.join(root, fn)
+                    try:
+                        s += os.path.getsize(fp)
+                        n += 1
+                    except OSError:
+                        pass
+        return {"count": n, "size": s}
+
+    def fmt_mb(b):
+        return round(b / 1048576, 1)
+
+    dd = data_dir()
+    conn = db.get_db()
+    contacts = conn.execute("SELECT COUNT(*) c FROM contacts").fetchone()["c"]
+    batches = conn.execute("SELECT COUNT(*) c FROM batches").fetchone()["c"]
+    conn.close()
+    ups, crs = dir_stat(UPLOAD_DIR), dir_stat(CROP_DIR)
+    try:
+        db_size = os.path.getsize(DB_PATH)
+    except OSError:
+        db_size = 0
+    return jsonify({
+        "data_dir": dd,
+        "db_path": DB_PATH,
+        "db_mb": fmt_mb(db_size),
+        "contacts": contacts,
+        "batches": batches,
+        "uploads": {"count": ups["count"], "mb": fmt_mb(ups["size"])},
+        "llm_config": {"path": CONFIG_PATH, "exists": os.path.exists(CONFIG_PATH)},
+        "total_mb": fmt_mb(db_size + ups["size"] + crs["size"]),
+    })
+
+
+@app.get("/api/backup.zip")
+def api_backup():
+    """一键备份：整个 data 文件夹打包下载。"""
+    import io
+    import zipfile
+    from carddeck.paths import data_dir
+    dd = data_dir()
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+        for root, _, files in os.walk(dd):
+            for fn in files:
+                fp = os.path.join(root, fn)
+                z.write(fp, os.path.relpath(fp, dd))
+    buf.seek(0)
+    return send_file(buf, mimetype="application/zip", as_attachment=True,
+                     download_name="carddeck-backup.zip")
+
+
+@app.post("/api/open-folder")
+def api_open_folder():
+    """在本机打开数据文件夹（电脑上点有效；手机点则打开服务器那台电脑的文件夹）。"""
+    import subprocess
+    import sys
+    from carddeck.paths import data_dir
+    dd = data_dir()
+    try:
+        if sys.platform.startswith("win"):
+            os.startfile(dd)  # noqa: S606
+        elif sys.platform == "darwin":
+            subprocess.Popen(["open", dd])
+        else:
+            subprocess.Popen(["xdg-open", dd])
+    except Exception as e:
+        return jsonify({"error": f"打不开：{e}"}), 500
+    return jsonify({"ok": True, "path": dd})
+
+
 @app.get("/api/export.xlsx")
 def api_export():
     ids = request.args.get("ids", "")
