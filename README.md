@@ -25,6 +25,11 @@
 
 手动启动：`pip install -r requirements.txt` 后 `python app.py`。未配 Key 也能跑全流程（识别返回空模板标“待核对”）。
 
+## 单文件版（别的电脑免装 Python/Direct 双击即用）
+
+- 本仓库 `dist/` 不提交 exe（70MB+）。在本机跑 `build_exe.bat`（或上面已打好的 `dist/CardDeck.exe`），把 exe 拷到别的电脑双击即可：自动打开浏览器，数据存在 exe 旁的 `data` 文件夹。
+- 换电脑后进页面 LLM设置 重新填 Key（Key 存在本地 `data/llm_config.json`，不跟着 exe 走）。
+
 ## 数据位置（本地文件，重启不丢）
 
 | 内容 | 路径 |

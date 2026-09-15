@@ -4,10 +4,9 @@ import os
 import sqlite3
 import time
 
-DB_PATH = os.environ.get(
-    "CARDDECK_DB",
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "carddeck.db"),
-)
+from .paths import data_dir
+
+DB_PATH = os.environ.get("CARDDECK_DB", os.path.join(data_dir(), "carddeck.db"))
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS batches (

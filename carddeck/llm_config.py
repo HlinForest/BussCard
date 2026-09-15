@@ -2,8 +2,9 @@
 import json
 import os
 
-BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CONFIG_PATH = os.path.join(BASE, "data", "llm_config.json")
+from .paths import data_dir
+
+CONFIG_PATH = os.path.join(data_dir(), "llm_config.json")
 
 
 def get_llm_config():

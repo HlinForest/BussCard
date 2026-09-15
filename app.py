@@ -17,16 +17,14 @@ from carddeck.detector import crop_box, detect_cards
 from carddeck.excel_export import export_xlsx
 from carddeck.llm import recognize_crop, recognize_photo_multi
 from carddeck.llm_config import get_llm_config, public_llm_config, save_llm_config
+from carddeck.paths import data_dir, res_path
 from carddeck.search import hybrid_search
 from carddeck.validate import find_duplicates, validate_fields
 
-BASE = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_DIR = os.path.join(BASE, "data", "uploads")
-CROP_DIR = os.path.join(BASE, "data", "crops")
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(CROP_DIR, exist_ok=True)
+UPLOAD_DIR = os.path.join(data_dir(), "uploads")
+CROP_DIR = os.path.join(data_dir(), "crops")
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
+app = Flask(__name__, static_folder=res_path("static"), template_folder=res_path("templates"))
 app.config["MAX_CONTENT_LENGTH"] = 30 * 1024 * 1024
 db.init_db()
 
@@ -418,4 +416,11 @@ def api_export():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
+    import sys
+    port = int(os.environ.get("PORT", 5000))
+    frozen = getattr(sys, "frozen", False)
+    debug = os.environ.get("CARDDECK_DEBUG", "" if frozen else "1") == "1"
+    if frozen and os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+        import webbrowser
+        webbrowser.open(f"http://127.0.0.1:{port}/")
+    app.run(host="0.0.0.0", port=port, debug=debug)

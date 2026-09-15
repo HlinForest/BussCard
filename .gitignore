@@ -8,3 +8,9 @@ __pycache__/
 *.pyo
 .venv/
 venv/
+.build-venv/
+
+# PyInstaller 产物（exe 太大不进仓库，在本机打好直接拷走）
+dist/
+build/
+*.spec
