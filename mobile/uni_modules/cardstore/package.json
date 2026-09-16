@@ -2,9 +2,33 @@
   "id": "cardstore",
   "displayName": "BussCard 文件与分享",
   "version": "0.1.0",
-  "description": "图片私有目录读写、备份导入导出、系统分享、文件选择",
+  "description": "图片私有目录读写、备份导入导出、系统分享",
+  "keywords": [
+    "cardstore"
+  ],
+  "repository": "",
+  "engines": {
+    "HBuilderX": "^3.6.11"
+  },
   "dcloudext": {
-    "type": "native-uts"
+    "type": "uts",
+    "sale": {
+      "regular": {
+        "price": "0.00"
+      },
+      "sourcecode": {
+        "price": "0.00"
+      }
+    },
+    "contact": {
+      "qq": ""
+    },
+    "declaration": {
+      "ads": "无",
+      "data": "插件不采集任何数据",
+      "permissions": "无"
+    },
+    "npmurl": ""
   },
   "uni_modules": {
     "dependencies": [],
@@ -12,7 +36,12 @@
     "platforms": {
       "client": {
         "App": {
-          "app-vue": "u"
+          "app-android": {
+            "minVersion": 26
+          },
+          "app-ios": {
+            "minVersion": 12
+          }
         }
       }
     }

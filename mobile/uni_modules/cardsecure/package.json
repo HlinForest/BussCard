@@ -3,8 +3,32 @@
   "displayName": "BussCard 安全存储",
   "version": "0.1.0",
   "description": "API Key 进系统安全存储（Android KeyStore / iOS Keychain / 鸿蒙 AssetStore）",
+  "keywords": [
+    "cardsecure"
+  ],
+  "repository": "",
+  "engines": {
+    "HBuilderX": "^3.6.11"
+  },
   "dcloudext": {
-    "type": "native-uts"
+    "type": "uts",
+    "sale": {
+      "regular": {
+        "price": "0.00"
+      },
+      "sourcecode": {
+        "price": "0.00"
+      }
+    },
+    "contact": {
+      "qq": ""
+    },
+    "declaration": {
+      "ads": "无",
+      "data": "插件不采集任何数据",
+      "permissions": "无"
+    },
+    "npmurl": ""
   },
   "uni_modules": {
     "dependencies": [],
@@ -12,7 +36,12 @@
     "platforms": {
       "client": {
         "App": {
-          "app-vue": "u"
+          "app-android": {
+            "minVersion": 26
+          },
+          "app-ios": {
+            "minVersion": 12
+          }
         }
       }
     }
