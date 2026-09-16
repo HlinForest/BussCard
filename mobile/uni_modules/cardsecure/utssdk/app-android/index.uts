@@ -1,0 +1,92 @@
+/**
+ * cardsecure Android 实现：AndroidKeyStore AES/GCM/NoPadding（框架自带，无第三方依赖）。
+ * 存储格式：base64(iv) + '.' + base64(cipher)，与 iOS/鸿蒙侧格式约定一致（跨端不迁移 Key，只迁移数据）。
+ * TS↔UTS 边界只传字符串，不经过二进制桥接。
+ */
+import { getAppContext } from 'io.dcloud.uts.android';
+import KeyStore from 'java.security.KeyStore';
+import KeyGenerator from 'javax.crypto.KeyGenerator';
+import Cipher from 'javax.crypto.Cipher';
+import GCMParameterSpec from 'javax.crypto.spec.GCMParameterSpec';
+import Base64 from 'android.util.Base64';
+import Charset from 'java.nio.charset.Charset';
+import SharedPreferences from 'android.content.SharedPreferences';
+import Key from 'java.security.Key';
+import KeyGenParameterSpec from 'android.security.keystore.KeyGenParameterSpec';
+import KeyProperties from 'android.security.keystore.KeyProperties';
+
+const ALIAS_PREFIX = 'busscard_';
+const UTF8 = Charset.forName('UTF-8');
+
+function prefs(): SharedPreferences {
+  return getAppContext()!!.getSharedPreferences('busscard_secure', 0);
+}
+
+function b64enc(data: ByteArray): string {
+  return Base64.encodeToString(data, Base64.NO_WRAP);
+}
+
+function b64dec(s: string): ByteArray {
+  return Base64.decode(s, Base64.DEFAULT);
+}
+
+function ensureKey(alias: string): void {
+  const ks = KeyStore.getInstance('AndroidKeyStore');
+  ks.load(null);
+  if (!ks.containsAlias(alias)) {
+    const kg = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, 'AndroidKeyStore');
+    const spec = new KeyGenParameterSpec.Builder(alias,
+      KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+      .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+      .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+      .setRandomizedEncryptionRequired(true)
+      .build();
+    kg.init(spec);
+    kg.generateKey();
+  }
+}
+
+function loadKey(alias: string): Key {
+  const ks = KeyStore.getInstance('AndroidKeyStore');
+  ks.load(null);
+  const k = ks.getKey(alias, null);
+  if (k == null) throw new Error('key missing');
+  return k;
+}
+
+export function secureSave(key: string, value: string): void {
+  const alias = ALIAS_PREFIX + key;
+  ensureKey(alias);
+  const secretKey = loadKey(alias);
+  const cipher = Cipher.getInstance('AES/GCM/NoPadding');
+  cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+  const iv = cipher.getIV();
+  const ct = cipher.doFinal(value.toByteArray(UTF8));
+  prefs().edit().putString(alias, b64enc(iv) + '.' + b64enc(ct)).apply();
+}
+
+export function secureLoad(key: string): string | null {
+  const alias = ALIAS_PREFIX + key;
+  const raw = prefs().getString(alias, null);
+  if (raw == null) return null;
+  const dot = raw.indexOf('.');
+  if (dot < 0) return null;
+  ensureKey(alias);
+  const secretKey = loadKey(alias);
+  const cipher = Cipher.getInstance('AES/GCM/NoPadding');
+  cipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(128, b64dec(raw.slice(0, dot))));
+  const pt = cipher.doFinal(b64dec(raw.slice(dot + 1)));
+  return pt.toString(UTF8);
+}
+
+export function secureClear(key: string): void {
+  const alias = ALIAS_PREFIX + key;
+  prefs().edit().remove(alias).apply();
+  try {
+    const ks = KeyStore.getInstance('AndroidKeyStore');
+    ks.load(null);
+    if (ks.containsAlias(alias)) ks.deleteEntry(alias);
+  } catch (_e) {
+    // 删 Key 失败不影响主流程（值已清）
+  }
+}

@@ -1,0 +1,19 @@
+/**
+ * cardstore 鸿蒙实现（files 沙箱 + Share Kit 分享）。
+ * 未在 DevEco/HBuilderX 内编译验证，无签名真机验证；API 签名与 app-android 一致。
+ */
+import { ShareFile } from '../index.uts';
+
+export function privateRoot(): string { return harmonyPrivateRoot(); }
+export function writeBytesB64(relPath: string, b64: string): string { return harmonyWriteBytesB64(relPath, b64); }
+export function readBytesB64(relPath: string): string | null { return harmonyReadBytesB64(relPath); }
+export function readAbsB64(absPath: string): string { return harmonyReadAbsB64(absPath); }
+export function systemShare(file: ShareFile): void { harmonySystemShare(file); }
+export function copyIntoPrivate(absPath: string, relPath: string): string { return harmonyCopyIntoPrivate(absPath, relPath); }
+
+declare function harmonyPrivateRoot(): string;
+declare function harmonyWriteBytesB64(relPath: string, b64: string): string;
+declare function harmonyReadBytesB64(relPath: string): string | null;
+declare function harmonyReadAbsB64(absPath: string): string;
+declare function harmonySystemShare(file: ShareFile): void;
+declare function harmonyCopyIntoPrivate(absPath: string, relPath: string): string;

@@ -2,5 +2,19 @@
   "id": "carddetect",
   "displayName": "BussCard 名片检测",
   "version": "0.1.0",
-  "description": "名片四边形自动检测（Android-OpenCV / iOS-Vision / 鸿蒙回退手动）"
+  "description": "名片四边形自动检测（Android-OpenCV / iOS-Vision / 鸿蒙回退手动）",
+  "dcloudext": {
+    "type": "native-uts"
+  },
+  "uni_modules": {
+    "dependencies": [],
+    "encrypt": [],
+    "platforms": {
+      "client": {
+        "App": {
+          "app-vue": "u"
+        }
+      }
+    }
+  }
 }

@@ -151,7 +151,7 @@ async function exportBackup() {
 }
 
 async function importBackup() {
-  const picked = cardFiles.pick('application/zip');
+  const picked = await cardFiles.pickZip();
   if (!picked) return;
   let bytes: Uint8Array;
   try {

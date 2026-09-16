@@ -1,0 +1,19 @@
+/**
+ * cardstore iOS 实现（Documents 目录 + UIActivityViewController 分享）。
+ * 未在 HBuilderX 内编译验证；API 签名与 app-android 一致。
+ */
+import { ShareFile } from '../index.uts';
+
+export function privateRoot(): string { return iosPrivateRoot(); }
+export function writeBytesB64(relPath: string, b64: string): string { return iosWriteBytesB64(relPath, b64); }
+export function readBytesB64(relPath: string): string | null { return iosReadBytesB64(relPath); }
+export function readAbsB64(absPath: string): string { return iosReadAbsB64(absPath); }
+export function systemShare(file: ShareFile): void { iosSystemShare(file); }
+export function copyIntoPrivate(absPath: string, relPath: string): string { return iosCopyIntoPrivate(absPath, relPath); }
+
+declare function iosPrivateRoot(): string;
+declare function iosWriteBytesB64(relPath: string, b64: string): string;
+declare function iosReadBytesB64(relPath: string): string | null;
+declare function iosReadAbsB64(absPath: string): string;
+declare function iosSystemShare(file: ShareFile): void;
+declare function iosCopyIntoPrivate(absPath: string, relPath: string): string;

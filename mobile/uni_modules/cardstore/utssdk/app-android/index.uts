@@ -1,0 +1,84 @@
+/**
+ * cardstore Android 实现：私有目录 files/busscard；分享走 MediaStore（content://，免 FileProvider）。
+ * TS↔UTS 边界只传字符串/数字：二进制全部以 base64 字符串过桥（见 base64.ts）。
+ */
+import { getAppContext } from 'io.dcloud.uts.android';
+import { ShareFile } from '../index.uts';
+import File from 'java.io.File';
+import Files from 'java.nio.file.Files';
+import Paths from 'java.nio.file.Paths';
+import StandardCopyOption from 'java.nio.file.StandardCopyOption';
+import ContentValues from 'android.content.ContentValues';
+import MediaStore from 'android.provider.MediaStore';
+import Intent from 'android.content.Intent';
+import Base64 from 'android.util.Base64';
+import Build from 'android.os.Build';
+
+function rootDir(): File {
+  const dir = new File(getAppContext()!!.getFilesDir(), 'busscard');
+  dir.mkdirs();
+  return dir;
+}
+
+/** 私有根目录（images/、backup/ 挂下面）。 */
+export function privateRoot(): string {
+  return rootDir().getAbsolutePath();
+}
+
+/** 把 base64 写到相对路径（如 images/photo/xxx.jpg），返回相对路径。 */
+export function writeBytesB64(relPath: string, b64: string): string {
+  const f = new File(rootDir(), relPath);
+  const parent = f.getParentFile();
+  if (parent != null) parent.mkdirs();
+  Files.write(f.toPath(), Base64.decode(b64, Base64.DEFAULT));
+  return relPath;
+}
+
+export function readBytesB64(relPath: string): string | null {
+  const f = new File(rootDir(), relPath);
+  if (!f.exists()) return null;
+  return Base64.encodeToString(Files.readAllBytes(f.toPath()), Base64.NO_WRAP);
+}
+
+/** 读沙箱绝对路径文件（文件选择器返回的暂存文件用）。 */
+export function readAbsB64(absPath: string): string {
+  return Base64.encodeToString(Files.readAllBytes(Paths.get(absPath)), Base64.NO_WRAP);
+}
+
+/** 系统分享（备份 zip / xlsx）：写入 Download Collection 后调分享面板。 */
+export function systemShare(file: ShareFile): void {
+  if (Build.VERSION.SDK_INT < 29) {
+    throw new Error('系统分享需要 Android 9+');
+  }
+  const ctx = getAppContext()!!;
+  const values = new ContentValues();
+  values.put(MediaStore.MediaColumns.DISPLAY_NAME, file.filename);
+  values.put(MediaStore.MediaColumns.MIME_TYPE, file.mime);
+  const resolver = ctx.getContentResolver();
+  const uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+  if (uri == null) throw new Error('创建分享文件失败');
+  const out = resolver.openOutputStream(uri);
+  if (out == null) throw new Error('打开发送流失败');
+  try {
+    out.write(Files.readAllBytes(Paths.get(file.path)));
+  } finally {
+    out.close();
+  }
+  const intent = new Intent(Intent.ACTION_SEND);
+  intent.setType(file.mime);
+  intent.putExtra(Intent.EXTRA_STREAM, uri);
+  intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+  intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+  const chooser = Intent.createChooser(intent, file.filename);
+  chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+  ctx.startActivity(chooser);
+}
+
+/** 导入用文件选择请走 uni.chooseFile（跨端一致）。 */
+export function copyIntoPrivate(absPath: string, relPath: string): string {
+  const dst = new File(rootDir(), relPath);
+  const parent = dst.getParentFile();
+  if (parent != null) parent.mkdirs();
+  Files.copy(Paths.get(absPath), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
+  return relPath;
+}

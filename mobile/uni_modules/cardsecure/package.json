@@ -2,5 +2,19 @@
   "id": "cardsecure",
   "displayName": "BussCard 安全存储",
   "version": "0.1.0",
-  "description": "API Key 进系统安全存储（Android EncryptedSharedPreferences / iOS Keychain / 鸿蒙 AssetStore）"
+  "description": "API Key 进系统安全存储（Android KeyStore / iOS Keychain / 鸿蒙 AssetStore）",
+  "dcloudext": {
+    "type": "native-uts"
+  },
+  "uni_modules": {
+    "dependencies": [],
+    "encrypt": [],
+    "platforms": {
+      "client": {
+        "App": {
+          "app-vue": "u"
+        }
+      }
+    }
+  }
 }

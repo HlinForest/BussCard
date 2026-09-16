@@ -1,0 +1,12 @@
+/**
+ * cardsecure iOS 实现（Keychain kSecClassGenericPassword）。
+ * 未在 HBuilderX 内编译验证；API 签名与 app-android 一致。
+ */
+
+export function secureSave(key: string, value: string): void { iosSecureSave(key, value); }
+export function secureLoad(key: string): string | null { return iosSecureLoad(key); }
+export function secureClear(key: string): void { iosSecureClear(key); }
+
+declare function iosSecureSave(key: string, value: string): void;
+declare function iosSecureLoad(key: string): string | null;
+declare function iosSecureClear(key: string): void;

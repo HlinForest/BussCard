@@ -9,15 +9,16 @@ import SQLiteStatement from 'android.database.sqlite.SQLiteStatement';
 import Cursor from 'android.database.Cursor';
 import { getAppContext } from 'io.dcloud.uts.android';
 import File from 'java.io.File';
-import FileInputStream from 'java.io.FileInputStream';
-import FileOutputStream from 'java.io.FileOutputStream';
+import Files from 'java.nio.file.Files';
+import Paths from 'java.nio.file.Paths';
+import StandardCopyOption from 'java.nio.file.StandardCopyOption';
 
 class BusscardHelper extends SQLiteOpenHelper {
   constructor() {
     super(getAppContext(), DB_NAME, null, 1);
   }
-  onCreate(_db: SQLiteDatabase): void {}
-  onUpgrade(_db: SQLiteDatabase, _oldVersion: number, _newVersion: number): void {}
+  override onCreate(_db: SQLiteDatabase): void {}
+  override onUpgrade(_db: SQLiteDatabase, _oldVersion: Int, _newVersion: Int): void {}
 }
 
 let helper: BusscardHelper | null = null;
@@ -29,11 +30,27 @@ function db(): SQLiteDatabase {
 
 function bind(stmt: SQLiteStatement, args: DbValue[]): void {
   for (let i = 0; i < args.length; i++) {
+    const p = (i + 1).toInt();
     const v = args[i];
-    if (v == null) stmt.bindNull(i + 1);
-    else if (typeof v === 'number') stmt.bindDouble(i + 1, v);
-    else stmt.bindString(i + 1, v);
+    if (v == null) stmt.bindNull(p);
+    else if (typeof v === 'number') stmt.bindDouble(p, v.toDouble());
+    else stmt.bindString(p, v);
   }
+}
+
+function escapeLit(v: DbValue): string {
+  if (v == null) return 'NULL';
+  if (typeof v === 'number') return v.toString();
+  return `'` + v.split(`'`).join(`''`) + `'`;
+}
+
+function inlineArgs(sql: string, args: DbValue[]): string {
+  const parts = sql.split('?');
+  let out = parts[0];
+  for (let i = 1; i < parts.length; i++) {
+    out += (i - 1 < args.length ? escapeLit(args[i - 1]) : '?') + parts[i];
+  }
+  return out;
 }
 
 class AndroidDb implements NativeDb {
@@ -45,7 +62,7 @@ class AndroidDb implements NativeDb {
     try {
       bind(stmt, args);
       try {
-        return Number(stmt.executeInsert());
+        return stmt.executeInsert().toDouble();
       } catch (_e) {
         stmt.execute();
         return 0;
@@ -69,17 +86,21 @@ class AndroidDb implements NativeDb {
     }
   }
   query(sql: string, args: DbValue[]): ContactRow[] {
-    const sargs: string[] = args.map((v) => (v == null ? '' : String(v)));
-    const cur: Cursor = db().rawQuery(sql, sargs);
+    // UTSArray 无法直传 Java String[]：无参走 rawQuery(sql, null)；
+    // 有参走转义内联（本 App 的查询本就无参，此为完整性兜底，SQL 内不得含字面问号）。
+    const cur: Cursor = args.length === 0
+      ? db().rawQuery(sql, null)
+      : db().rawQuery(inlineArgs(sql, args), null);
     const out: ContactRow[] = [];
     try {
-      const n = cur.getColumnCount();
+      const n: number = cur.getColumnCount();
       const cols: string[] = [];
-      for (let i = 0; i < n; i++) cols.push(cur.getColumnName(i));
+      for (let i = 0; i < n; i++) cols.push(cur.getColumnName(i.toInt()));
       while (cur.moveToNext()) {
         const row = new Map<string, DbValue>();
         for (let i = 0; i < n; i++) {
-          row.set(cols[i], cur.isNull(i) ? null : cur.getString(i));
+          const p = i.toInt();
+          row.set(cols[i], cur.isNull(p) ? null : cur.getString(p));
         }
         out.push(row);
       }
@@ -94,23 +115,10 @@ class AndroidDb implements NativeDb {
   }
   reopenDbFile(srcAbsPath: string): void {
     this.close();
-    const dst = new File(getAppContext().getFilesDir(), DB_NAME);
-    const input = new FileInputStream(new File(srcAbsPath));
-    try {
-      const output = new FileOutputStream(dst);
-      try {
-        const buf = new Array<number>(8192);
-        let len = input.read(buf);
-        while (len > 0) {
-          output.write(buf, 0, len);
-          len = input.read(buf);
-        }
-      } finally {
-        output.close();
-      }
-    } finally {
-      input.close();
-    }
+    const filesDir = getAppContext()?.getFilesDir();
+    if (filesDir == null) throw new Error('no filesDir');
+    const dst = new File(filesDir, DB_NAME);
+    Files.copy(Paths.get(srcAbsPath), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
     db();
   }
 }

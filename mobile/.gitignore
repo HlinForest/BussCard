@@ -4,3 +4,4 @@ dist-test/
 unpackage/
 .hbuilderx/
 *.log
+dist-apk/

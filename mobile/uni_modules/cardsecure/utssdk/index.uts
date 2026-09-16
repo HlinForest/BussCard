@@ -1,23 +1,4 @@
 /**
- * cardsecure：Key 进系统安全存储，不写日志、不进普通备份。
- * - Android: EncryptedSharedPreferences（AndroidX Security）
- * - iOS: Keychain（kSecClassGenericPassword）
- * - 鸿蒙：AssetStore（@kit.AssetStoreKit，同步接口）
- * HBuilderX 编译验证待做。
+ * cardsecure 公共形状（各端同签名，实现见 app-* 目录）。
+ * Key 只进系统安全存储，不写日志、不进普通备份。
  */
-
-export function secureSave(key: string, value: string): void {
-  nativeSecureSave(key, value);
-}
-
-export function secureLoad(key: string): string | null {
-  return nativeSecureLoad(key);
-}
-
-export function secureClear(key: string): void {
-  nativeSecureClear(key);
-}
-
-declare function nativeSecureSave(key: string, value: string): void;
-declare function nativeSecureLoad(key: string): string | null;
-declare function nativeSecureClear(key: string): void;

@@ -1,0 +1,12 @@
+/**
+ * cardsecure 鸿蒙实现（AssetStore 同步接口）。
+ * 未在 DevEco/HBuilderX 内编译验证，无签名真机验证；API 签名与 app-android 一致。
+ */
+
+export function secureSave(key: string, value: string): void { harmonySecureSave(key, value); }
+export function secureLoad(key: string): string | null { return harmonySecureLoad(key); }
+export function secureClear(key: string): void { harmonySecureClear(key); }
+
+declare function harmonySecureSave(key: string, value: string): void;
+declare function harmonySecureLoad(key: string): string | null;
+declare function harmonySecureClear(key: string): void;

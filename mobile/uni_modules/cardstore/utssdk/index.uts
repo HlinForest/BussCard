@@ -1,9 +1,6 @@
 /**
- * cardstore：图片私有目录读写、备份导入导出、系统分享、文件选择。
- * - 图片存应用私有目录（Android filesDir / iOS Documents / 鸿蒙 files），数据库只记相对路径
- * - 导出备份/Excel 走系统分享面板；导入经系统文件选择器
- * 原生映射：Android(FileProvider+ACTION_SEND/SAF)/iOS(UIActivityViewController/UIDocumentPicker)/
- * 鸿蒙(Picker+Share Kit)，HBuilderX 编译验证待做。
+ * cardstore：图片私有目录读写、备份导入导出、系统分享。
+ * 公共 API 形状（各端同签名，实现见 app-* 目录）。
  */
 
 export interface ShareFile {
@@ -11,39 +8,3 @@ export interface ShareFile {
   mime: string;
   filename: string;
 }
-
-/** 私有根目录（images/、backup/ 挂下面）。 */
-export function privateRoot(): string {
-  return nativePrivateRoot();
-}
-
-/** 把 bytes 写到相对路径（如 images/photo/xxx.jpg），返回相对路径。 */
-export function writeBytes(relPath: string, data: Uint8Array): string {
-  return nativeWriteBytes(relPath, data);
-}
-
-export function readBytes(relPath: string): Uint8Array | null {
-  return nativeReadBytes(relPath);
-}
-
-/** 读沙箱绝对路径文件（文件选择器返回的暂存文件用）。 */
-export function readAbsFile(absPath: string): Uint8Array {
-  return nativeReadAbsFile(absPath);
-}
-
-/** 系统分享（备份 zip / xlsx）：调起原生分享面板。 */
-export function systemShare(file: ShareFile): void {
-  nativeSystemShare(file);
-}
-
-/** 系统文件选择器：选一个 zip/图片，拷入沙箱暂存并返回绝对路径，取消返回空串。 */
-export function systemPickFile(mime: string): string {
-  return nativeSystemPickFile(mime);
-}
-
-declare function nativePrivateRoot(): string;
-declare function nativeWriteBytes(relPath: string, data: Uint8Array): string;
-declare function nativeReadBytes(relPath: string): Uint8Array | null;
-declare function nativeReadAbsFile(absPath: string): Uint8Array;
-declare function nativeSystemShare(file: ShareFile): void;
-declare function nativeSystemPickFile(mime: string): string;

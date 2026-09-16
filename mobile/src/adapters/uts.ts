@@ -17,8 +17,25 @@ import { nativeDb } from '@/uni_modules/carddb/utssdk/app-ios/index.uts';
 // #ifdef APP-HARMONY
 import { nativeDb } from '@/uni_modules/carddb/utssdk/app-harmony/index.uts';
 // #endif
-import { privateRoot, readAbsFile, readBytes, systemPickFile, systemShare, writeBytes } from '@/uni_modules/cardstore/utssdk/index.uts';
-import { secureClear, secureLoad, secureSave } from '@/uni_modules/cardsecure/utssdk/index.uts';
+// #ifdef APP-ANDROID
+import { privateRoot, readAbsB64, readBytesB64, writeBytesB64, systemShare, copyIntoPrivate } from '@/uni_modules/cardstore/utssdk/app-android/index.uts';
+// #endif
+// #ifdef APP-IOS
+import { privateRoot, readAbsB64, readBytesB64, writeBytesB64, systemShare, copyIntoPrivate } from '@/uni_modules/cardstore/utssdk/app-ios/index.uts';
+// #endif
+// #ifdef APP-HARMONY
+import { privateRoot, readAbsB64, readBytesB64, writeBytesB64, systemShare, copyIntoPrivate } from '@/uni_modules/cardstore/utssdk/app-harmony/index.uts';
+// #endif
+import { base64ToBytes, bytesToBase64 } from '../services/base64';
+// #ifdef APP-ANDROID
+import { secureSave, secureLoad, secureClear } from '@/uni_modules/cardsecure/utssdk/app-android/index.uts';
+// #endif
+// #ifdef APP-IOS
+import { secureSave, secureLoad, secureClear } from '@/uni_modules/cardsecure/utssdk/app-ios/index.uts';
+// #endif
+// #ifdef APP-HARMONY
+import { secureSave, secureLoad, secureClear } from '@/uni_modules/cardsecure/utssdk/app-harmony/index.uts';
+// #endif
 import { detectCards } from '@/uni_modules/carddetect/utssdk/index.uts';
 
 function rowToContact(row: Map<string, string | number | null>): Contact {
@@ -170,10 +187,24 @@ export class UniHttp implements HttpAdapter {
 
 export const cardFiles = {
   root(): string { return privateRoot(); },
-  read(rel: string): Uint8Array | null { return readBytes(rel); },
-  readAbs(abs: string): Uint8Array { return readAbsFile(abs); },
-  write(rel: string, data: Uint8Array): string { return writeBytes(rel, data); },
-  pick(mime: string): string { return systemPickFile(mime); },
+  read(rel: string): Uint8Array | null {
+    const b64 = readBytesB64(rel);
+    return b64 == null ? null : base64ToBytes(b64);
+  },
+  readAbs(abs: string): Uint8Array { return base64ToBytes(readAbsB64(abs)); },
+  write(rel: string, data: Uint8Array): string { return writeBytesB64(rel, bytesToBase64(data)); },
+  copyIn(abs: string, rel: string): string { return copyIntoPrivate(abs, rel); },
+  /** 选 zip 用 uni.chooseFile（跨端一致），返回沙箱暂存绝对路径，取消返回空串。 */
+  pickZip(): Promise<string> {
+    return new Promise((resolve) => {
+      uni.chooseFile({
+        count: 1,
+        extension: ['.zip'],
+        success: (r: any) => resolve((r.tempFiles?.[0]?.path ?? r.tempFilePaths?.[0] ?? '') as string),
+        fail: () => resolve(''),
+      });
+    });
+  },
   share(path: string, mime: string, filename: string): void { systemShare({ path, mime, filename }); },
 };
 
